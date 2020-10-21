@@ -10,6 +10,15 @@ MESSAGE(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
 
 SET(MAZE_SOURCES
     Source/Maze/main.cpp
+	Source/Maze/frag.fs
+	Source/Maze/Object.cpp
+	Source/Maze/Object.h
+	Source/Maze/SceneManager.cpp
+	Source/Maze/SceneManager.h
+	Source/Maze/Shader.cpp
+	Source/Maze/Shader.h
+	Source/Maze/vert.vs
+	Source/Maze/glad.c
 )
 
 SET(FRAMEWORKS)
@@ -26,6 +35,8 @@ SET(FRAMEWORKS
     ${COREFOUNDATION_LIB}
     )
 ENDIF (APPLE)
+
+
 
 LINK_DIRECTORIES(Lib)
 

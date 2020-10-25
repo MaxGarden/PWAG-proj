@@ -4,6 +4,9 @@
 
 class FPSCamera final : public Camera
 {
+private:
+    static const glm::vec3 s_upDirection;
+    
 public:
     FPSCamera(GLFWwindow* window, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), float fov = 45.0f, float moveSpeed = 10.0f, float lookSpeed = 0.005f);
     virtual ~FPSCamera() override = default;

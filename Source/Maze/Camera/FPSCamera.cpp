@@ -1,5 +1,12 @@
 #include "FPSCamera.h"
 
+const glm::vec3 FPSCamera::s_upDirection =
+{
+    0.0f,
+    1.0f,
+    0.0f
+};
+
 FPSCamera::FPSCamera(GLFWwindow* window, glm::vec3 position, float fov, float moveSpeed, float lookSpeed) :
     Camera(window),
     m_position {position},
@@ -82,8 +89,6 @@ void FPSCamera::HandleMouse(float deltaTime)
 
 void FPSCamera::HandleKeyboard(float deltaTime)
 {
-    static const auto up = glm::vec3(0.0f, 1.0f, 0.0f);
-    
     glm::vec3 cameraDirection
     {
         cos(m_yaw) * cos(m_pitch),
@@ -91,7 +96,7 @@ void FPSCamera::HandleKeyboard(float deltaTime)
         sin(m_yaw) * cos(m_pitch)
     };
     
-    glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+    glm::vec3 cameraRight = glm::normalize(glm::cross(s_upDirection, cameraDirection));
     
     const auto window = GetWindow();
     const auto addToPosition = [this](const auto& delta)
@@ -121,20 +126,6 @@ void FPSCamera::HandleKeyboard(float deltaTime)
 
 glm::mat4 FPSCamera::CalculateViewMatrix() const noexcept
 {
-    static const glm::vec3 right
-    {
-        1.0f,
-        0.0f,
-        0.0f,
-    };
-    
-    static const glm::vec3 up
-    {
-        0.0f,
-        1.0f,
-        0.0f
-    };
-    
     glm::vec3 direction
     {
         cos(m_yaw) * cos(m_pitch),
@@ -142,7 +133,7 @@ glm::mat4 FPSCamera::CalculateViewMatrix() const noexcept
         sin(m_yaw) * cos(m_pitch)
     };
     
-    return glm::lookAt(m_position, m_position + glm::normalize(direction), up);
+    return glm::lookAt(m_position, m_position + glm::normalize(direction), s_upDirection);
 }
 
 glm::mat4 FPSCamera::CalculateProjectionMatrix() const noexcept

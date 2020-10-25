@@ -19,6 +19,12 @@ SET(MAZE_SOURCES
 	Source/Maze/Shader.h
 	Source/Maze/vert.vs
 	Source/Maze/glad.c
+
+
+	Source/Maze/Camera/Camera.cpp
+	Source/Maze/Camera/Camera.h
+	Source/Maze/Camera/FPSCamera.cpp
+	Source/Maze/Camera/FPSCamera.h
 )
 
 SET(FRAMEWORKS)

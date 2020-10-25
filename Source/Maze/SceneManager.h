@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -8,6 +8,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
 #include "Object.h"
+#include "Camera/Camera.h"
+
+#include <memory>
 
 class SceneManager
 {
@@ -21,10 +24,12 @@ public:
 	Object object; // do zmiany na liste, czy cos
 	bool error = false;
 
-	SceneManager();
+	SceneManager(std::unique_ptr<Camera>&& camera);
 	~SceneManager();
+    
 	void DrawScene();
 
-
+private:
+    std::unique_ptr<Camera> m_camera;
 };
 

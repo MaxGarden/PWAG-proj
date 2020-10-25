@@ -5,16 +5,16 @@ Object::Object()
 {
 }
 
-Object::Object(char* name, char* vertexShaderFile, char* fragmentShaderFile, float* vert, unsigned int* indi, int numVer)
+Object::Object(char* name, std::unique_ptr<Shader>&& sha, float* vert, unsigned int* indi, int numVer) :
+    shader {std::move(sha)}
 {
 	objectName = name;
 	vertices = vert;
 	indices = indi;
 	numVertices = numVer;
-
-	shader = Shader(vertexShaderFile, fragmentShaderFile);
-	shader.SetMVP();
-	shader.SetVec3("color", 0.67f, 0.84f, 0.90f);
+    
+	shader->SetMVP();
+	shader->SetVec3("color", 0.67f, 0.84f, 0.90f);
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -35,8 +35,7 @@ Object::Object(char* name, char* vertexShaderFile, char* fragmentShaderFile, flo
 
 	glBindVertexArray(0);
 
-
-	shader.Use();
+	shader->Use();
 }
 
 
@@ -49,6 +48,8 @@ void Object::Destroy()
 
 void Object::Draw()
 {
+    shader->SetMVP();
+    
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0);
 }

@@ -7,6 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Camera/Camera.h"
+
 class Shader
 {
 	char* ReadShader(char* aShaderFile);
@@ -16,13 +18,15 @@ class Shader
 
 public:
 	int shaderProgramHandle;
-	Shader();
-	Shader(char* vertexShaderFile, char* fragmentShaderFile);
+	Shader(const Camera& camera, char* vertexShaderFile = nullptr, char* fragmentShaderFile = nullptr);
 	~Shader();
 	void setMat4(const char* name, const glm::mat4& mat);
 	void SetVec3(const char* name, float x, float y, float z);
 	void Use();
 	void SetMVP();
+    
+private:
+    const Camera& m_camera;
 
 };
 

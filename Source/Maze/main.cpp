@@ -1,7 +1,10 @@
-﻿#include <glad/glad.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "SceneManager.h">
+#include "SceneManager.h"
+#include "Camera/FPSCamera.h"
+
+#include <memory>
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -31,6 +34,8 @@ int main()
 		glfwTerminate();
 		return -2;
 	}
+    
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwMakeContextCurrent(window);
 	//----------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -39,16 +44,13 @@ int main()
 		return -1;
 	}
 
-
-	SceneManager sceneManager;
+    SceneManager sceneManager { std::make_unique<FPSCamera>(window) };
 	if (!sceneManager.error)
 		while (!glfwWindowShouldClose(window)) {
-			sceneManager.SceneManager::DrawScene();
-
-
+            sceneManager.SceneManager::DrawScene();
 
 			glfwSwapBuffers(window);
-			glfwPollEvents();
+            glfwPollEvents();
 		}
 
 	glfwDestroyWindow(window);

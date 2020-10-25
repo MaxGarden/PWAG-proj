@@ -10,10 +10,12 @@
 
 #include"Shader.h"
 
+#include <memory>
+
 class Object
 {
 	char* objectName;
-	Shader shader;
+    std::unique_ptr<Shader> shader;
 	float * vertices;
 	unsigned int numVertices;
 	unsigned int* indices;
@@ -21,7 +23,7 @@ class Object
 
 public:
 	Object();
-	Object(char* name, char* vertexShaderFile, char* fragmentShaderFile , float* vertices, unsigned int* indices , int numVer);
+	Object(char* name, std::unique_ptr<Shader>&& shader, float* vertices, unsigned int* indices , int numVer);
 	void Destroy();
 	void Draw();
 };

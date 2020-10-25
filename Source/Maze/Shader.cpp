@@ -1,4 +1,4 @@
-﻿#include "Shader.h"
+#include "Shader.h"
 
 
 char* Shader::ReadShader(char* aShaderFile)
@@ -56,12 +56,11 @@ int Shader::SetFragmentShader(char* fragmentShaderFile)
 	}
 	return fragmentShaderHandle;
 }
-
-Shader::Shader() {}
-
-Shader::Shader(char* vertexShaderFile, char* fragmentShaderFile)
+Shader::Shader(const Camera& camera, char* vertexShaderFile, char* fragmentShaderFile) :
+    m_camera {camera}
 {
-	SetShaders(vertexShaderFile, fragmentShaderFile);
+    if(vertexShaderFile != nullptr && fragmentShaderFile != nullptr)
+        SetShaders(vertexShaderFile, fragmentShaderFile);
 }
 
 Shader::~Shader()
@@ -114,13 +113,11 @@ void Shader::SetMVP()
 	glUseProgram(shaderProgramHandle);
 	//zmienna typu UNIFORM -- macierz przekształcenia
 
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
-
-	glm::mat4 Tr = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
-	glm::mat4 Rt = glm::rotate(glm::mat4(1.0f), glm::radians(-10.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    const auto projectionMatrix = m_camera.GetProjectionMatrix();
+    const auto viewMatrix = m_camera.GetViewMatrix();
 
 	//macierz przekształcenia
-	glm::mat4 mvp = Projection * Tr * Rt;
+    glm::mat4 mvp = projectionMatrix * viewMatrix;
 	setMat4("MVP", mvp);
 
 }

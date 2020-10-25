@@ -1,29 +1,43 @@
-﻿#include "SceneManager.h"
+#include "SceneManager.h"
+
+SceneManager::SceneManager(std::unique_ptr<Camera>&& camera) :
+    m_camera {std::move(camera)}
+{
+    InitScene();
+    SetLight();
+    SetFloor();
+}
+
+SceneManager::~SceneManager()
+{
+    object.Destroy();
+}
 
 void SceneManager::InitScene()
 {
 	glEnable(GL_DEPTH_TEST);
 
 	float floorVertices[12] = {
-		 10.f,  10.f, -50.f,
-		 10.f, -10.f, -0.5f,
-		-10.f, -10.f, -0.5f,
-		-10.f,  10.f, -50.f
+		 50.f,  -5.f, 50.f,
+		 50.f, -5.f, -50.f,
+		-50.f, -5.f, -50.f,
+		-50.f, -5.f, 50.f
 	};
 	unsigned int floorIndices[6] = {
 	   0, 1, 3,
 	   1, 2, 3
 	};
 
-	object = Object("floor", "vert.vs", "frag.fs", floorVertices, floorIndices, 6);
+	object = Object("floor", std::unique_ptr<Shader>(new Shader(*m_camera, "vert.vs", "frag.fs")), floorVertices, floorIndices, 6);
 }
 
 void SceneManager::DrawScene()
 {
+    m_camera->Update();
+    
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	object.Draw();
-
 }
 
 void SceneManager::SetLight()
@@ -67,21 +81,3 @@ void SceneManager::SetFloor()
 
 	//glUseProgram(floorShaderHandle);
 }
-
-
-SceneManager::SceneManager()
-{
-	InitScene();
-	SetLight();
-	SetFloor();
-}
-
-SceneManager::~SceneManager()
-{
-	object.Destroy();
-}
-
-
-
-
-

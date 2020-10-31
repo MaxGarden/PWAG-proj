@@ -142,5 +142,5 @@ glm::mat4 FPSCamera::CalculateProjectionMatrix() const noexcept
     glfwGetWindowSize(GetWindow(), &windowWidth, &windowHeight);
     
     const auto aspectRatio = static_cast<float>(windowWidth) / windowHeight;
-    return glm::perspective(m_fov, aspectRatio, 0.1f, 100.0f);
+    return glm::perspective(m_fov, aspectRatio, 0.1f, 500.0f);
 }

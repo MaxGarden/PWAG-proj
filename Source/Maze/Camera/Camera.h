@@ -13,6 +13,9 @@ public:
     virtual const glm::mat4& GetViewMatrix() const noexcept = 0;
     virtual const glm::mat4& GetProjectionMatrix() const noexcept = 0;
     
+    virtual const glm::vec3& GetPosition() const noexcept = 0;
+    virtual const glm::vec3& GetFrontDirection() const noexcept = 0;
+    
     void Update();
     
 protected:

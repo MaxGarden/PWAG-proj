@@ -1,4 +1,7 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include "MapLoader.h"
+#include <stb/stb_image.h>
 
 MapLoader::MapLoader(SceneManager& sceneManager) :
     m_sceneManager{sceneManager}
@@ -7,30 +10,32 @@ MapLoader::MapLoader(SceneManager& sceneManager) :
 
 bool MapLoader::LoadFromBitmap(const std::string& fileName, const glm::vec3& startOffset, const glm::vec2& cellSize) const noexcept
 {
-    std::vector<unsigned char> data;
-    size_t width, height;
-    
-    if(!LoadDataFromBitmap(fileName, data, width, height))
+    int width, height, nrComponents;
+    const auto data = stbi_load(fileName.c_str(), &width, &height, &nrComponents, 0);
+    if(!data)
         return false;
     
     auto position = startOffset;
-    
-    for(auto y = 0u; y < height; ++y)
+    auto index = 0u;
+    const auto size = width * height * nrComponents;
+    for(auto i = 0; i < size; i+= nrComponents)
     {
-        for(auto x = 0u; x < width; ++x)
-        {
-            const auto type = data[width * y + x];
-            auto object = CreateObject(type, position, cellSize);
-            if(object)
-                m_sceneManager.AddObject(std::move(object));
-            
-            position.x += cellSize.x;
-        }
+        auto value = 0;
+        for(auto j = 0; j < nrComponents; ++j)
+            value += data[i + j];
         
-        position.x = startOffset.x;
-        position.z += cellSize.y;
+        if(auto object = CreateObject(value / nrComponents, position, cellSize))
+            m_sceneManager.AddObject(std::move(object));
+        
+        position.x += cellSize.x;
+        if(++index % width == 0)
+        {
+            position.x = startOffset.x;
+            position.z += cellSize.y;
+        }
     }
     
+    stbi_image_free(data);
     return true;
 }
 

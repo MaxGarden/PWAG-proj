@@ -1,8 +1,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "SceneManager.h"
+#include "SceneManager/SceneManager.h"
 #include "Camera/FPSCamera.h"
+#include "MapLoader/MapLoader.h"
 
 #include <memory>
 
@@ -43,15 +44,18 @@ int main()
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-
+    
     SceneManager sceneManager { std::make_unique<FPSCamera>(window) };
-	if (!sceneManager.error)
-		while (!glfwWindowShouldClose(window)) {
-            sceneManager.SceneManager::DrawScene();
+    
+    MapLoader mapLoader{sceneManager};
+    mapLoader.LoadFromBitmap("Data/maze.bmp", glm::vec3{-50.0f, -5.1f, -50.0f}, glm::vec2{2.0f, 2.0f});
+    
+    while (!glfwWindowShouldClose(window)) {
+        sceneManager.SceneManager::DrawScene();
 
-			glfwSwapBuffers(window);
-            glfwPollEvents();
-		}
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

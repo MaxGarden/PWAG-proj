@@ -8,13 +8,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include"Shader.h"
+#include "Shader.h"
 
+#include <glm/glm.hpp>
 #include <memory>
 
 class Object
 {
-	char* objectName;
+	const char* objectName;
     std::unique_ptr<Shader> shader;
 	float * vertices;
 	unsigned int numVertices;
@@ -23,7 +24,7 @@ class Object
 
 public:
 	Object();
-	Object(char* name, std::unique_ptr<Shader>&& shader, float* vertices, unsigned int* indices , int numVer);
+	Object(const char* name, const glm::vec3& color, std::unique_ptr<Shader>&& shader, float* vertices, unsigned int* indices , int numVer);
 	void Destroy();
 	void Draw();
 };

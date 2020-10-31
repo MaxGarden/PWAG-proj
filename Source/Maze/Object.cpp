@@ -5,7 +5,7 @@ Object::Object()
 {
 }
 
-Object::Object(char* name, std::unique_ptr<Shader>&& sha, float* vert, unsigned int* indi, int numVer) :
+Object::Object(const char* name, const glm::vec3& color, std::unique_ptr<Shader>&& sha, float* vert, unsigned int* indi, int numVer) :
     shader {std::move(sha)}
 {
 	objectName = name;
@@ -14,7 +14,7 @@ Object::Object(char* name, std::unique_ptr<Shader>&& sha, float* vert, unsigned 
 	numVertices = numVer;
     
 	shader->SetMVP();
-	shader->SetVec3("color", 0.67f, 0.84f, 0.90f);
+	shader->SetVec3("color", color.x, color.y, color.z);
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);

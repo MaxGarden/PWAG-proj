@@ -10,21 +10,27 @@ MESSAGE(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
 
 SET(MAZE_SOURCES
     Source/Maze/main.cpp
-	Source/Maze/frag.fs
 	Source/Maze/Object.cpp
 	Source/Maze/Object.h
-	Source/Maze/SceneManager.cpp
-	Source/Maze/SceneManager.h
+
 	Source/Maze/Shader.cpp
 	Source/Maze/Shader.h
-	Source/Maze/vert.vs
+
 	Source/Maze/glad.c
 
+	Source/Maze/Shaders/frag.fs
+	Source/Maze/Shaders/vert.vs
+
+	Source/Maze/SceneManager/SceneManager.cpp
+	Source/Maze/SceneManager/SceneManager.h
 
 	Source/Maze/Camera/Camera.cpp
 	Source/Maze/Camera/Camera.h
 	Source/Maze/Camera/FPSCamera.cpp
 	Source/Maze/Camera/FPSCamera.h
+
+	Source/Maze/MapLoader/MapLoader.h
+	Source/Maze/MapLoader/MapLoader.cpp
 )
 
 SET(FRAMEWORKS)

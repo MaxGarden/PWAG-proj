@@ -39,6 +39,22 @@ const glm::mat4& FPSCamera::GetProjectionMatrix() const noexcept
     return m_projectionMatrix;
 }
 
+const glm::vec3& FPSCamera::GetPosition() const noexcept
+{
+    return m_position;
+}
+
+const glm::vec3& FPSCamera::GetFrontDirection() const noexcept
+{
+    if(m_isFrontDirectionDirty)
+    {
+        m_frontDirection = CalculateFrontDirection();
+        m_isFrontDirectionDirty = false;
+    }
+    
+    return m_frontDirection;
+}
+
 void FPSCamera::Update(float deltaTime)
 {
     HandleInput(deltaTime);
@@ -77,6 +93,7 @@ void FPSCamera::HandleMouse(float deltaTime)
     {
         m_yaw += m_lookSpeed * deltaX;
         m_isViewMatrixDirty = true;
+        m_isFrontDirectionDirty = true;
     }
     
     if (abs(deltaY) > epsilon)
@@ -84,25 +101,22 @@ void FPSCamera::HandleMouse(float deltaTime)
         m_pitch -= m_lookSpeed * deltaY;
         m_pitch = fmin(glm::radians(89.0f), fmax(glm::radians(-89.0f), m_pitch));
         m_isViewMatrixDirty = true;
+        m_isFrontDirectionDirty = true;
     }
 }
 
 void FPSCamera::HandleKeyboard(float deltaTime)
 {
-    glm::vec3 cameraDirection
-    {
-        cos(m_yaw) * cos(m_pitch),
-        sin(m_pitch),
-        sin(m_yaw) * cos(m_pitch)
-    };
-    
-    glm::vec3 cameraRight = glm::normalize(glm::cross(s_upDirection, cameraDirection));
+    glm::vec3 cameraRight = glm::normalize(glm::cross(s_upDirection, GetFrontDirection()));
     
     const auto window = GetWindow();
     const auto addToPosition = [this](const auto& delta)
     {
         m_position += delta;
-        m_position.y = m_initialPosition.y;
+
+        if(!m_freeLook)
+            m_position.y = m_initialPosition.y;
+        
         m_isViewMatrixDirty = true;
     };
     
@@ -110,6 +124,8 @@ void FPSCamera::HandleKeyboard(float deltaTime)
     {
         return glfwGetKey(window, keyCode) == GLFW_PRESS;
     };
+    
+    const auto& cameraDirection = GetFrontDirection();
     
     if (isKeyPressed(GLFW_KEY_UP) || isKeyPressed(GLFW_KEY_W))
         addToPosition(cameraDirection * deltaTime * m_moveSpeed);
@@ -122,18 +138,17 @@ void FPSCamera::HandleKeyboard(float deltaTime)
     
     if (isKeyPressed(GLFW_KEY_LEFT) || isKeyPressed(GLFW_KEY_A))
         addToPosition(cameraRight * deltaTime * m_moveSpeed);
+    
+    if(isKeyPressed(GLFW_KEY_F))
+    {
+        m_freeLook = !m_freeLook;
+        addToPosition(glm::vec3{});
+    }
 }
 
 glm::mat4 FPSCamera::CalculateViewMatrix() const noexcept
 {
-    glm::vec3 direction
-    {
-        cos(m_yaw) * cos(m_pitch),
-        sin(m_pitch),
-        sin(m_yaw) * cos(m_pitch)
-    };
-    
-    return glm::lookAt(m_position, m_position + glm::normalize(direction), s_upDirection);
+    return glm::lookAt(m_position, m_position + GetFrontDirection(), s_upDirection);
 }
 
 glm::mat4 FPSCamera::CalculateProjectionMatrix() const noexcept
@@ -143,4 +158,14 @@ glm::mat4 FPSCamera::CalculateProjectionMatrix() const noexcept
     
     const auto aspectRatio = static_cast<float>(windowWidth) / windowHeight;
     return glm::perspective(m_fov, aspectRatio, 0.1f, 500.0f);
+}
+
+glm::vec3 FPSCamera::CalculateFrontDirection() const noexcept
+{
+    return glm::normalize(glm::vec3
+    {
+        cos(m_yaw) * cos(m_pitch),
+        sin(m_pitch),
+        sin(m_yaw) * cos(m_pitch)
+    });
 }

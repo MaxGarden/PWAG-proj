@@ -11,14 +11,14 @@
 
 class Shader
 {
-	char* ReadShader(char* aShaderFile);
-	int SetVertexShader(char* vertexShaderFile);
-	int SetFragmentShader(char* fragmentShaderFile);
-	void SetShaders(char* vertexShaderFile, char* fragmentShaderFile);
+	char* ReadShader(const char* aShaderFile);
+	int SetVertexShader(const char* vertexShaderFile);
+	int SetFragmentShader(const char* fragmentShaderFile);
+	void SetShaders(const char* vertexShaderFile, const char* fragmentShaderFile);
 
 public:
 	int shaderProgramHandle;
-	Shader(const Camera& camera, char* vertexShaderFile = nullptr, char* fragmentShaderFile = nullptr);
+	Shader(const Camera& camera, const char* vertexShaderFile = nullptr, const char* fragmentShaderFile = nullptr);
 	~Shader();
 	void setMat4(const char* name, const glm::mat4& mat);
 	void SetVec3(const char* name, float x, float y, float z);

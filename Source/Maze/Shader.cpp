@@ -1,7 +1,7 @@
 #include "Shader.h"
 
 
-char* Shader::ReadShader(char* aShaderFile)
+char* Shader::ReadShader(const char* aShaderFile)
 {
 	FILE* filePointer = fopen(aShaderFile, "rb");
 	char* content = NULL;
@@ -17,7 +17,7 @@ char* Shader::ReadShader(char* aShaderFile)
 	return content;
 }
 
-int Shader::SetVertexShader(char* vertexShaderFile)
+int Shader::SetVertexShader(const char* vertexShaderFile)
 {
 	char* vertexShader = ReadShader(vertexShaderFile);
 	int vertexShaderHandle = glCreateShader(GL_VERTEX_SHADER);
@@ -37,7 +37,7 @@ int Shader::SetVertexShader(char* vertexShaderFile)
 	return vertexShaderHandle;
 }
 
-int Shader::SetFragmentShader(char* fragmentShaderFile)
+int Shader::SetFragmentShader(const char* fragmentShaderFile)
 {
 	char* fragmentShader = ReadShader(fragmentShaderFile);
 	int fragmentShaderHandle = glCreateShader(GL_FRAGMENT_SHADER);
@@ -56,7 +56,7 @@ int Shader::SetFragmentShader(char* fragmentShaderFile)
 	}
 	return fragmentShaderHandle;
 }
-Shader::Shader(const Camera& camera, char* vertexShaderFile, char* fragmentShaderFile) :
+Shader::Shader(const Camera& camera, const char* vertexShaderFile, const char* fragmentShaderFile) :
     m_camera {camera}
 {
     if(vertexShaderFile != nullptr && fragmentShaderFile != nullptr)
@@ -84,7 +84,7 @@ void Shader::Use()
 	glUseProgram(shaderProgramHandle);
 }
 
-void Shader::SetShaders(char* vertexShaderFile, char* fragmentShaderFile)
+void Shader::SetShaders(const char* vertexShaderFile, const char* fragmentShaderFile)
 {
 	int vertexShadeHandle = SetVertexShader(vertexShaderFile);
 	int fragmentShadeHandle = SetFragmentShader(fragmentShaderFile);

@@ -94,8 +94,7 @@ std::unique_ptr<Object> MapLoader::CreateObject(unsigned char type, const glm::v
 std::unique_ptr<Object> MapLoader::CreateWall(const glm::vec3& position, const glm::vec2& size) const noexcept
 {
     static const auto wallHeight = 8.0f;
-    
-    float vertices[] =
+    const float vertices[] =
     {
         position.x,             position.y,                 position.z,             0.0f,   0.0f,   -1.0f,  0.0f,   0.0f,
         position.x + size.x,    position.y,                 position.z,             0.0f,   0.0f,   -1.0f,  1.0f,   0.0f,
@@ -124,7 +123,7 @@ std::unique_ptr<Object> MapLoader::CreateWall(const glm::vec3& position, const g
         position.x,             position.y + wallHeight,    position.z + size.y,    0.0f,   1.0f,   0.0f,   0.0f,   0.0f,
     };
     
-    unsigned int indices[] =
+    const unsigned int indices[] =
     {
         0, 1, 2,
         2, 3, 0,
@@ -154,5 +153,11 @@ std::unique_ptr<Object> MapLoader::CreateCoin(const glm::vec3& position, const g
     if(!modelData.IsValid)
         return nullptr;
     
-    return std::make_unique<Object>("Data/Textures/chest.jpg", *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
+    auto result = std::make_unique<Object>("Data/Textures/chest.jpg", *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
+    
+    result->SetRotation(glm::vec3{-90.0f, 0.0f, 0.0f});
+    result->SetScale(glm::vec3{0.02f, 0.02f, 0.02f});
+    result->SetPosition(position);
+    
+    return result;
 }

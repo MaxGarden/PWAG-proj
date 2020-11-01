@@ -30,9 +30,9 @@ void SceneManager::InitScene()
 	   1, 2, 3
 	};
 
-    auto shader = CreateShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
+    const auto shader = EnsureShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
     
-    AddObject(std::make_unique<Object>("Data/Textures/grass.jpg", std::move(shader), floorVertices, floorIndices, 6));
+    AddObject(std::make_unique<Object>("Data/Textures/grass.jpg", *shader, floorVertices, floorIndices, 6));
 }
 
 void SceneManager::DrawScene()
@@ -51,7 +51,17 @@ void SceneManager::AddObject(std::unique_ptr<Object>&& object) noexcept
     m_objects.emplace_back(std::move(object));
 }
 
-std::unique_ptr<Shader> SceneManager::CreateShader(const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName) const noexcept
+Shader* SceneManager::EnsureShader(const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName) const noexcept
 {
-    return std::make_unique<Shader>(*m_camera, vertexShaderFileName.c_str(), fragmentShaderFileName.c_str());
+    const auto shaderTuple = std::make_tuple(vertexShaderFileName, fragmentShaderFileName);
+    const auto iterator = m_shadersMap.find(shaderTuple);
+    if(iterator != std::cend(m_shadersMap))
+        return iterator->second.get();
+    
+    auto shader = std::make_unique<Shader>(*m_camera, vertexShaderFileName.c_str(), fragmentShaderFileName.c_str());
+    
+    auto x =std::pair<std::tuple<std::string, std::string>, std::unique_ptr<Shader>>(shaderTuple, nullptr);
+    
+    m_shadersMap.emplace(shaderTuple, std::move(shader));
+    return EnsureShader(vertexShaderFileName, fragmentShaderFileName);
 }

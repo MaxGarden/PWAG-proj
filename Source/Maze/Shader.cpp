@@ -17,6 +17,11 @@ void Shader::SetColor(const glm::vec3 &color) const noexcept
     SetVec3("color", color);
 }
 
+void Shader::SetModelMatrix(const glm::mat4& modelMatrix) const noexcept
+{
+    SetMat4("modelMatrix", modelMatrix);
+}
+
 char* Shader::ReadShader(const char* aShaderFile)
 {
 	FILE* filePointer = fopen(aShaderFile, "rb");
@@ -88,7 +93,7 @@ void Shader::SetFloat(const char* name, float value) const noexcept
     glUniform1f(glGetUniformLocation(m_shaderProgramHandle, name), value);
 }
 
-void Shader::Use()
+void Shader::Use() const
 {
 	glUseProgram(m_shaderProgramHandle);
 }
@@ -117,14 +122,11 @@ void Shader::SetShaders(const char* vertexShaderFile, const char* fragmentShader
 	glDeleteShader(fragmentShadeHandle);
 }
 
-void Shader::Update()
+void Shader::Update() const
 {
-    static const auto modelMatrix = glm::mat4{1.0f};
-    
     const auto projectionMatrix = m_camera.GetProjectionMatrix();
     const auto viewMatrix = m_camera.GetViewMatrix();
 
-    SetMat4("modelMatrix", modelMatrix);
     SetMat4("viewMatrix", viewMatrix);
     SetMat4("projectionMatrix", projectionMatrix);
     

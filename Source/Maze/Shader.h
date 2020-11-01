@@ -16,9 +16,10 @@ public:
 	~Shader();
     
     void SetColor(const glm::vec3& color) const noexcept;
+    void SetModelMatrix(const glm::mat4& modelMatrix) const noexcept;
     
-    void Use();
-    void Update();
+    void Use() const;
+    void Update() const;
     
 private:
     char* ReadShader(const char* aShaderFile);

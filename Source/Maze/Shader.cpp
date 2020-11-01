@@ -1,5 +1,21 @@
 #include "Shader.h"
 
+Shader::Shader(const Camera& camera, const char* vertexShaderFile, const char* fragmentShaderFile) :
+    m_camera {camera}
+{
+    if(vertexShaderFile != nullptr && fragmentShaderFile != nullptr)
+        SetShaders(vertexShaderFile, fragmentShaderFile);
+}
+
+Shader::~Shader()
+{
+    glDeleteProgram(m_shaderProgramHandle);
+}
+
+void Shader::SetColor(const glm::vec3 &color) const noexcept
+{
+    SetVec3("color", color);
+}
 
 char* Shader::ReadShader(const char* aShaderFile)
 {
@@ -56,32 +72,25 @@ int Shader::SetFragmentShader(const char* fragmentShaderFile)
 	}
 	return fragmentShaderHandle;
 }
-Shader::Shader(const Camera& camera, const char* vertexShaderFile, const char* fragmentShaderFile) :
-    m_camera {camera}
+
+void Shader::SetVec3(const char* name, const glm::vec3& value) const noexcept
 {
-    if(vertexShaderFile != nullptr && fragmentShaderFile != nullptr)
-        SetShaders(vertexShaderFile, fragmentShaderFile);
+    glUniform3f(glGetUniformLocation(m_shaderProgramHandle, name), value.x, value.y, value.z);
 }
 
-Shader::~Shader()
+void Shader::SetMat4(const char* name, const glm::mat4& value) const noexcept
 {
-	//glDeleteProgram(shaderProgramHandle);
+	glUniformMatrix4fv(glGetUniformLocation(m_shaderProgramHandle, name), 1, GL_FALSE, &value[0][0]);
 }
 
-void Shader::SetVec3(const char* name, float x, float y , float z)
+void Shader::SetFloat(const char* name, float value) const noexcept
 {
-	glUniform3f(glGetUniformLocation(shaderProgramHandle, name), x, y, z);
+    glUniform1f(glGetUniformLocation(m_shaderProgramHandle, name), value);
 }
-
-void Shader::setMat4(const char* name, const glm::mat4& mat)
-{
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramHandle, name), 1, GL_FALSE, &mat[0][0]);
-}
-
 
 void Shader::Use()
 {
-	glUseProgram(shaderProgramHandle);
+	glUseProgram(m_shaderProgramHandle);
 }
 
 void Shader::SetShaders(const char* vertexShaderFile, const char* fragmentShaderFile)
@@ -92,33 +101,41 @@ void Shader::SetShaders(const char* vertexShaderFile, const char* fragmentShader
 	if (vertexShadeHandle == 0 || fragmentShadeHandle == 0)
 		return ;
 
-	shaderProgramHandle = glCreateProgram();
-	glAttachShader(shaderProgramHandle, vertexShadeHandle);
-	glAttachShader(shaderProgramHandle, fragmentShadeHandle);
-	glLinkProgram(shaderProgramHandle);
+	m_shaderProgramHandle = glCreateProgram();
+	glAttachShader(m_shaderProgramHandle, vertexShadeHandle);
+	glAttachShader(m_shaderProgramHandle, fragmentShadeHandle);
+	glLinkProgram(m_shaderProgramHandle);
 
 	int success;
 	char infoLog[512];
-	glGetProgramiv(shaderProgramHandle, GL_LINK_STATUS, &success);
+	glGetProgramiv(m_shaderProgramHandle, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetProgramInfoLog(shaderProgramHandle, 512, NULL, infoLog);
+		glGetProgramInfoLog(m_shaderProgramHandle, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 	glDeleteShader(vertexShadeHandle);
 	glDeleteShader(fragmentShadeHandle);
 }
 
-void Shader::SetMVP()
+void Shader::Update()
 {
-	glUseProgram(shaderProgramHandle);
-	//zmienna typu UNIFORM -- macierz przekształcenia
-
+    static const auto modelMatrix = glm::mat4{1.0f};
+    
     const auto projectionMatrix = m_camera.GetProjectionMatrix();
     const auto viewMatrix = m_camera.GetViewMatrix();
 
-	//macierz przekształcenia
-    glm::mat4 mvp = projectionMatrix * viewMatrix;
-	setMat4("MVP", mvp);
-
+    SetMat4("modelMatrix", modelMatrix);
+    SetMat4("viewMatrix", viewMatrix);
+    SetMat4("projectionMatrix", projectionMatrix);
+    
+    const auto cameraPosition = m_camera.GetPosition();
+    const auto cameraFrontDirection = m_camera.GetFrontDirection();
+    
+    SetVec3("light.position", cameraPosition);
+    SetVec3("light.frontDirection", cameraFrontDirection);
+    SetVec3("light.ambient", glm::vec3{0.1f, 0.1f, 0.1f});
+    SetVec3("light.diffuse", glm::vec3{0.8f, 0.8f, 0.8f});
+            
+    SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+    SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 }
-

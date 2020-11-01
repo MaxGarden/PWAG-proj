@@ -11,22 +11,27 @@
 
 class Shader
 {
-	char* ReadShader(const char* aShaderFile);
-	int SetVertexShader(const char* vertexShaderFile);
-	int SetFragmentShader(const char* fragmentShaderFile);
-	void SetShaders(const char* vertexShaderFile, const char* fragmentShaderFile);
-
 public:
-	int shaderProgramHandle;
 	Shader(const Camera& camera, const char* vertexShaderFile = nullptr, const char* fragmentShaderFile = nullptr);
 	~Shader();
-	void setMat4(const char* name, const glm::mat4& mat);
-	void SetVec3(const char* name, float x, float y, float z);
-	void Use();
-	void SetMVP();
+    
+    void SetColor(const glm::vec3& color) const noexcept;
+    
+    void Use();
+    void Update();
+    
+private:
+    char* ReadShader(const char* aShaderFile);
+    int SetVertexShader(const char* vertexShaderFile);
+    int SetFragmentShader(const char* fragmentShaderFile);
+    void SetShaders(const char* vertexShaderFile, const char* fragmentShaderFile);
+    
+    void SetMat4(const char* name, const glm::mat4& value) const noexcept;
+    void SetVec3(const char* name, const glm::vec3& value) const noexcept;
+    void SetFloat(const char* name, float value) const noexcept;
     
 private:
     const Camera& m_camera;
-
+    int m_shaderProgramHandle;
 };
 

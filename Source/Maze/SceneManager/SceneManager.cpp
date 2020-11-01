@@ -16,20 +16,23 @@ void SceneManager::InitScene()
 {
 	glEnable(GL_DEPTH_TEST);
 
-	float floorVertices[12] = {
-		 150.f,  -5.f, 150.f,
-		 150.f, -5.f, -150.f,
-		-150.f, -5.f, -150.f,
-		-150.f, -5.f, 150.f
+	float floorVertices[] =
+    {
+		 150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 1.0f, 1.0f,
+		 150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 1.0f, 0.0f,
+		-150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 0.0f, 0.0f,
+		-150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 0.0f, 1.0f,
 	};
-	unsigned int floorIndices[6] = {
+    
+	unsigned int floorIndices[] =
+    {
 	   0, 1, 3,
 	   1, 2, 3
 	};
 
     auto shader = CreateShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
     
-    AddObject(std::make_unique<Object>("floor", glm::vec3{0.2f, 1.0f, 0.2f}, std::move(shader), floorVertices, floorIndices, 6));
+    AddObject(std::make_unique<Object>("Data/Textures/grass.jpg", std::move(shader), floorVertices, floorIndices, 6));
 }
 
 void SceneManager::DrawScene()

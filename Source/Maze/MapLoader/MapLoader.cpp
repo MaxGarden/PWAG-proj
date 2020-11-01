@@ -88,57 +88,55 @@ std::unique_ptr<Object> MapLoader::CreateWall(const glm::vec3& position, const g
     
     float vertices[] =
     {
-        position.x,  position.y, position.z,                                // 0 - LeftDown Bottom
-        position.x + size.x,  position.y, position.z,                       // 1 - RightDown Bottom
-        position.x + size.x,  position.y, position.z + size.y,              // 2 - RightUp Bottom
-        position.x,  position.y, position.z + size.y,                       // 3 - LeftUp Bottom
-        
-        position.x,  position.y + wallHeight, position.z,                   // 4 - LeftDown Top
-        position.x + size.x,  position.y + wallHeight, position.z,          // 5 - RightDown Top
-        position.x + size.x,  position.y + wallHeight, position.z + size.y, // 6 - RightUp Top
-        position.x,  position.y + wallHeight, position.z + size.y,          // 7 - LeftUp Top
+        position.x,             position.y,                 position.z,             0.0f,   0.0f,   -1.0f,  0.0f,   0.0f,
+        position.x + size.x,    position.y,                 position.z,             0.0f,   0.0f,   -1.0f,  1.0f,   0.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z,             0.0f,   0.0f,   -1.0f,  1.0f,   1.0f,
+        position.x,             position.y + wallHeight,    position.z,             0.0f,   0.0f,   -1.0f,  0.0f,   1.0f,
+        position.x,             position.y,                 position.z + size.y,    0.0f,   0.0f,   1.0f,   0.0f,   0.0f,
+        position.x + size.x,    position.y,                 position.z + size.y,    0.0f,   0.0f,   1.0f,   1.0f,   0.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    0.0f,   0.0f,   1.0f,   1.0f,   1.0f,
+        position.x,             position.y + wallHeight,    position.z + size.y,    0.0f,   0.0f,   1.0f,   0.0f,   1.0f,
+        position.x,             position.y + wallHeight,    position.z + size.y,    -1.0f,  0.0f,   0.0f,   1.0f,   0.0f,
+        position.x,             position.y + wallHeight,    position.z,             -1.0f,  0.0f,   0.0f,   1.0f,   1.0f,
+        position.x,             position.y,                 position.z,             -1.0f,  0.0f,   0.0f,   0.0f,   1.0f,
+        position.x,             position.y,                 position.z + size.y,    -1.0f,  0.0f,   0.0f,   0.0f,   0.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    1.0f,   0.0f,   0.0f,   1.0f,   0.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z,             1.0f,   0.0f,   0.0f,   1.0f,   1.0f,
+        position.x + size.x,    position.y,                 position.z,             1.0f,   0.0f,   0.0f,   0.0f,   1.0f,
+        position.x + size.x,    position.y,                 position.z + size.y,    1.0f,   0.0f,   0.0f,   0.0f,   0.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    1.0f,   0.0f,   0.0f,   1.0f,   0.0f,
+        position.x,             position.y,                 position.z,             0.0f,   -1.0f,  0.0f,   0.0f,   1.0f,
+        position.x + size.x,    position.y,                 position.z,             0.0f,   -1.0f,  0.0f,   1.0f,   1.0f,
+        position.x + size.x,    position.y,                 position.z + size.y,    0.0f,   -1.0f,  0.0f,   1.0f,   0.0f,
+        position.x,             position.y,                 position.z + size.y,    0.0f,   -1.0f,  0.0f,   0.0f,   0.0f,
+        position.x,             position.y + wallHeight,    position.z,             0.0f,   1.0f,   0.0f,   0.0f,   1.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z,             0.0f,   1.0f,   0.0f,   1.0f,   1.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    0.0f,   1.0f,   0.0f,   1.0f,   0.0f,
+        position.x,             position.y + wallHeight,    position.z + size.y,    0.0f,   1.0f,   0.0f,   0.0f,   0.0f,
     };
-    
-    // LeftDown Bottom, LeftUp Bottom, RightUp Bottom
-    // LeftDown Bottom, RightUp Bottom, RightDown Bottom
-    
-    // LeftDown Bottom, LeftDown Top, LeftUp Bottom
-    // LeftDown Bottom, LeftUp Bottom, LeftUp Top
-    
-    // LeftDown Top, LeftUp Top, RightUp Top
-    // LeftDown Top, RightUp Top, RightDown Top
-    
-    // RightDown Bottom, RightDown Top, RightUp Top
-    // RightDown Bottom, RightUp Top, RightUp Bottom
-    
-    // LeftDown Bottom, LeftDown Top, RightDown Top
-    // LeftDown Bottom, RightDown Top, RightDown Bottom
-    
-    // LeftUp Bottom, LeftUp Top, RightUp Top
-    // LeftUp Bottom, RightUp Top, RightUp Bottom
     
     unsigned int indices[] =
     {
-        0, 3, 2,
-        0, 2, 1,
-
-        0, 4, 3,
-        0, 3, 7,
-
-        4, 7, 6,
-        4, 6, 5,
-
-        1, 5, 6,
-        1, 6, 2,
-
-        0, 4, 5,
-        0, 5, 1,
-
-        3, 7, 6,
-        3, 6, 2,
+        0, 1, 2,
+        2, 3, 0,
+        
+        4, 5, 6,
+        6, 7 ,4,
+        
+        8, 9, 10,
+        10, 11, 8,
+        
+        12, 13, 14,
+        14, 15, 16,
+        
+        17, 18, 19,
+        19, 20, 17,
+        
+        21, 22, 23,
+        23, 24, 21
     };
 
     auto shader = m_sceneManager.CreateShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
     
-    return std::make_unique<Object>("wall", glm::vec3{0.3f, 0.4f, 1.0f}, std::move(shader), vertices, indices, 36);
+    return std::make_unique<Object>("Data/Textures/cobble.jpg", std::move(shader), vertices, indices, 36);
 }

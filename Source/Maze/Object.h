@@ -12,10 +12,10 @@
 
 #include <glm/glm.hpp>
 #include <memory>
+#include <string>
 
 class Object
 {
-	const char* objectName;
     std::unique_ptr<Shader> shader;
 	float * vertices;
 	unsigned int numVertices;
@@ -23,9 +23,11 @@ class Object
 	unsigned int VBO, VAO, EBO;
 
 public:
-	Object();
-	Object(const char* name, const glm::vec3& color, std::unique_ptr<Shader>&& shader, float* vertices, unsigned int* indices , int numVer);
+	Object(const std::string& textureName, std::unique_ptr<Shader>&& shader, float* vertices, unsigned int* indices , int numVer);
 	void Destroy();
 	void Draw();
+    
+private:
+    const std::string m_textureName;
 };
 

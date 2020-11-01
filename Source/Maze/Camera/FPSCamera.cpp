@@ -108,6 +108,7 @@ void FPSCamera::HandleMouse(float deltaTime)
 void FPSCamera::HandleKeyboard(float deltaTime)
 {
     static auto canChangeFreeLookMode = true;
+    static auto canChangePolygonMode = true;
     
     glm::vec3 cameraRight = glm::normalize(glm::cross(s_upDirection, GetFrontDirection()));
     
@@ -141,14 +142,29 @@ void FPSCamera::HandleKeyboard(float deltaTime)
     if (isKeyPressed(GLFW_KEY_LEFT) || isKeyPressed(GLFW_KEY_A))
         addToPosition(cameraRight * deltaTime * m_moveSpeed);
     
-    if(isKeyPressed(GLFW_KEY_F) && canChangeFreeLookMode)
+    if(isKeyPressed(GLFW_KEY_F))
     {
-        canChangeFreeLookMode = false;
-        m_freeLook = !m_freeLook;
-        addToPosition(glm::vec3{});
+        if(canChangeFreeLookMode)
+        {
+            canChangeFreeLookMode = false;
+            m_freeLook = !m_freeLook;
+            addToPosition(glm::vec3{});
+        }
     }
     else
         canChangeFreeLookMode = true;
+    
+    if(isKeyPressed(GLFW_KEY_G))
+    {
+        if(canChangePolygonMode)
+        {
+            canChangePolygonMode = false;
+            m_polygonMode = m_polygonMode == GL_FILL ? GL_LINE : GL_FILL;
+            glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
+        }
+    }
+    else
+        canChangePolygonMode = true;
 }
 
 glm::mat4 FPSCamera::CalculateViewMatrix() const noexcept

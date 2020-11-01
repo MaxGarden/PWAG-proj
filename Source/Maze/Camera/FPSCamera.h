@@ -47,6 +47,7 @@ private:
     bool m_initialized = false;
     
     bool m_freeLook = false;
+    GLenum m_polygonMode = GL_FILL;
     
     const float m_fov;
     const float m_moveSpeed;

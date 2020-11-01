@@ -18,6 +18,9 @@ SET(MAZE_SOURCES
 
 	Source/Maze/glad.c
 
+	Source/Maze/ResourcesManager.h
+	Source/Maze/ResourcesManager.cpp
+
 	Source/Maze/Shaders/frag.fs
 	Source/Maze/Shaders/vert.vs
 

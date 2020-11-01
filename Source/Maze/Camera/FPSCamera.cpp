@@ -107,6 +107,8 @@ void FPSCamera::HandleMouse(float deltaTime)
 
 void FPSCamera::HandleKeyboard(float deltaTime)
 {
+    static auto canChangeFreeLookMode = true;
+    
     glm::vec3 cameraRight = glm::normalize(glm::cross(s_upDirection, GetFrontDirection()));
     
     const auto window = GetWindow();
@@ -139,11 +141,14 @@ void FPSCamera::HandleKeyboard(float deltaTime)
     if (isKeyPressed(GLFW_KEY_LEFT) || isKeyPressed(GLFW_KEY_A))
         addToPosition(cameraRight * deltaTime * m_moveSpeed);
     
-    if(isKeyPressed(GLFW_KEY_F))
+    if(isKeyPressed(GLFW_KEY_F) && canChangeFreeLookMode)
     {
+        canChangeFreeLookMode = false;
         m_freeLook = !m_freeLook;
         addToPosition(glm::vec3{});
     }
+    else
+        canChangeFreeLookMode = true;
 }
 
 glm::mat4 FPSCamera::CalculateViewMatrix() const noexcept

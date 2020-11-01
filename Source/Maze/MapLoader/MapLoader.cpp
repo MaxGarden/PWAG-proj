@@ -1,6 +1,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include "MapLoader.h"
+#include "../ObjLoader/ObjLoader.h"
+
 #include <stb/stb_image.h>
 
 MapLoader::MapLoader(SceneManager& sceneManager) :
@@ -71,12 +73,19 @@ bool MapLoader::LoadDataFromBitmap(const std::string& fileName, std::vector<unsi
     return true;
 }
 
+Shader* MapLoader::GetShader() const noexcept
+{
+    return m_sceneManager.EnsureShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
+}
+
 std::unique_ptr<Object> MapLoader::CreateObject(unsigned char type, const glm::vec3& position, const glm::vec2& size) const noexcept
 {
     switch(type)
     {
         case 0:
             return CreateWall(position, size);
+        case 100:
+            return CreateCoin(position, size);
         default:
             return nullptr;
     }
@@ -136,7 +145,14 @@ std::unique_ptr<Object> MapLoader::CreateWall(const glm::vec3& position, const g
         23, 24, 21
     };
 
-    auto shader = m_sceneManager.CreateShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
+    return std::make_unique<Object>("Data/Textures/cobble.jpg", *GetShader(), vertices, indices, 36);
+}
+
+std::unique_ptr<Object> MapLoader::CreateCoin(const glm::vec3& position, const glm::vec2& size) const noexcept
+{
+    const auto& modelData = ObjLoader::GetInstance().EnsureModelData("Data/Models/chest.obj");
+    if(!modelData.IsValid)
+        return nullptr;
     
-    return std::make_unique<Object>("Data/Textures/cobble.jpg", std::move(shader), vertices, indices, 36);
+    return std::make_unique<Object>("Data/Textures/chest.jpg", *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
 }

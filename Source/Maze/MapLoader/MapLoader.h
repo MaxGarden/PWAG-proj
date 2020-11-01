@@ -7,6 +7,7 @@
 
 #include "../Object.h"
 #include "../SceneManager/SceneManager.h"
+#include "../Shader.h"
 
 class MapLoader final
 {
@@ -19,9 +20,13 @@ public:
 private:
     bool LoadDataFromBitmap(const std::string& fileName, std::vector<unsigned char>& destination, size_t& width, size_t& height) const noexcept;
     
+    Shader* GetShader() const noexcept;
+    
     std::unique_ptr<Object> CreateObject(unsigned char type, const glm::vec3& position, const glm::vec2& size) const noexcept;
     
     std::unique_ptr<Object> CreateWall(const glm::vec3& position, const glm::vec2& size) const noexcept;
+    
+    std::unique_ptr<Object> CreateCoin(const glm::vec3& position, const glm::vec2& size) const noexcept;
     
 private:
     SceneManager& m_sceneManager;

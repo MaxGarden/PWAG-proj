@@ -34,6 +34,9 @@ SET(MAZE_SOURCES
 
 	Source/Maze/MapLoader/MapLoader.h
 	Source/Maze/MapLoader/MapLoader.cpp
+
+	Source/Maze/ObjLoader/ObjLoader.h
+	Source/Maze/ObjLoader/ObjLoader.cpp
 )
 
 SET(FRAMEWORKS)

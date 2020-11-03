@@ -1,13 +1,13 @@
 #include "Object.h"
 #include "ResourcesManager.h"
 
+static const auto componentsCount = 8;
+
 Object::Object(const std::string& textureName, const Shader& shader, const float* vertices, unsigned const int* indices, unsigned int verticesCount) :
     m_textureName{textureName},
     m_verticesCount{verticesCount},
     m_shader{shader}
 {
-    static const auto componentsCount = 8;
-    
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -31,14 +31,15 @@ Object::Object(const std::string& textureName, const Shader& shader, const float
 
 	glBindVertexArray(0);
 
+    IntializeBoxCollider(vertices, verticesCount);
+    
 	m_shader.Use();
-    RecalculateModelMatrix();
 }
 
 void Object::SetPosition(const glm::vec3& position)
 {
     m_position = position;
-    RecalculateModelMatrix();
+    MarkModelMatrixAsDirty();
 }
 
 const glm::vec3& Object::GetPosition() const noexcept
@@ -49,7 +50,7 @@ const glm::vec3& Object::GetPosition() const noexcept
 void Object::SetRotation(const glm::vec3& rotationInDegrees)
 {
     m_rotationInDegrees = rotationInDegrees;
-    RecalculateModelMatrix();
+    MarkModelMatrixAsDirty();
 }
 
 const glm::vec3& Object::GetRotation() const noexcept
@@ -60,12 +61,26 @@ const glm::vec3& Object::GetRotation() const noexcept
 void Object::SetScale(const glm::vec3& scale)
 {
     m_scale = scale;
-    RecalculateModelMatrix();
+    MarkModelMatrixAsDirty();
 }
 
 const glm::vec3& Object::GetScale() const noexcept
 {
     return m_scale;
+}
+
+bool Object::IsCollidingWithSphere(const glm::vec3& center, float radius) const noexcept
+{
+    RecalculateBoxColliderIfNeeded();
+    
+    const glm::vec3 point
+    {
+        std::max(m_boxColliderMin.x, std::min(center.x, m_boxColliderMax.x)),
+        std::max(m_boxColliderMin.y, std::min(center.y, m_boxColliderMax.y)),
+        std::max(m_boxColliderMin.z, std::min(center.z, m_boxColliderMax.z))
+    };
+
+    return glm::distance(point, center) < radius;
 }
 
 void Object::Destroy()
@@ -80,7 +95,7 @@ void Object::Draw()
     m_shader.Use();
     m_shader.Update();
     m_shader.SetColor(glm::vec3{1.0f, 1.0f, 1.0f});
-    m_shader.SetModelMatrix(m_modelMatrix);
+    m_shader.SetModelMatrix(GetModelMatrix());
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, ResourcesManager::GetInstance().EnsureTextureId(m_textureName));
@@ -89,14 +104,71 @@ void Object::Draw()
 	glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, 0);
 }
 
-void Object::RecalculateModelMatrix()
+glm::mat4 Object::CalculateModelMatrix() const noexcept
 {
-    m_modelMatrix = glm::mat4{1.0f};
+    auto result = glm::mat4{1.0f};
     
-    m_modelMatrix = glm::translate(m_modelMatrix, m_position);
-    m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(m_rotationInDegrees.x), glm::vec3{1.0f, 0.0f, 0.0f});
-    m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(m_rotationInDegrees.y), glm::vec3{0.0f, 1.0f, 0.0f});
-    m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(m_rotationInDegrees.z), glm::vec3{0.0f, 0.0f, 1.0f});
-    m_modelMatrix = glm::scale(m_modelMatrix, m_scale);
+    result = glm::translate(result, m_position);
+    result = glm::rotate(result, glm::radians(m_rotationInDegrees.x), glm::vec3{1.0f, 0.0f, 0.0f});
+    result = glm::rotate(result, glm::radians(m_rotationInDegrees.y), glm::vec3{0.0f, 1.0f, 0.0f});
+    result = glm::rotate(result, glm::radians(m_rotationInDegrees.z), glm::vec3{0.0f, 0.0f, 1.0f});
+    result = glm::scale(result, m_scale);
+    
+    return result;
 }
 
+const glm::mat4& Object::GetModelMatrix() const noexcept
+{
+    if(m_isModelMatrixDirty)
+    {
+        m_modelMatrix = CalculateModelMatrix();
+        m_isModelMatrixDirty = false;
+    }
+    
+    return m_modelMatrix;
+}
+
+void Object::MarkModelMatrixAsDirty() const noexcept
+{
+    m_isModelMatrixDirty = true;
+    m_isBoxColliderDirty = true;
+}
+
+void Object::IntializeBoxCollider(const float* vertices, size_t size) noexcept
+{
+    m_initialBoxColliderMin = m_initialBoxColliderMax = glm::vec4
+    {
+        vertices[0],
+        vertices[1],
+        vertices[2],
+        1.0f
+    };
+    
+    for(auto i = componentsCount; i < size; i+=componentsCount)
+    {
+        const auto x = vertices[i];
+        const auto y = vertices[i + 1];
+        const auto z = vertices[i + 2];
+        
+        m_initialBoxColliderMin.x = std::min(m_initialBoxColliderMin.x, x);
+        m_initialBoxColliderMin.y = std::min(m_initialBoxColliderMin.y, y);
+        m_initialBoxColliderMin.z = std::min(m_initialBoxColliderMin.z, z);
+        
+        m_initialBoxColliderMax.x = std::max(m_initialBoxColliderMax.x, x);
+        m_initialBoxColliderMax.y = std::max(m_initialBoxColliderMax.y, y);
+        m_initialBoxColliderMax.z = std::max(m_initialBoxColliderMax.z, z);
+    }
+}
+
+void Object::RecalculateBoxColliderIfNeeded() const noexcept
+{
+    if(!m_isBoxColliderDirty)
+        return;
+    
+    const auto& modelMatrix = GetModelMatrix();
+    
+    m_boxColliderMin = modelMatrix * m_initialBoxColliderMin;
+    m_boxColliderMax = modelMatrix * m_initialBoxColliderMax;
+    
+    m_isBoxColliderDirty = false;
+}

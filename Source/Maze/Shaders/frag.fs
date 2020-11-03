@@ -27,7 +27,6 @@ void main()
     vec3 lightDir = normalize(light.position - FragmentPosition);
         
     float theta = dot(lightDir, normalize(-light.frontDirection));
-    
 
     vec3 ambient = light.ambient * texture(fragmentTexture, TextureCoords).rgb;
     

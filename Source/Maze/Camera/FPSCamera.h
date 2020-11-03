@@ -4,33 +4,29 @@
 
 class FPSCamera final : public Camera
 {
-private:
-    static const glm::vec3 s_upDirection;
-    
 public:
-    FPSCamera(GLFWwindow* window, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), float fov = 45.0f, float moveSpeed = 20.0f, float lookSpeed = 0.005f);
+    FPSCamera(GLFWwindow* window, float fov = 45.0f);
     virtual ~FPSCamera() override = default;
     
     virtual const glm::mat4& GetViewMatrix() const noexcept override;
     virtual const glm::mat4& GetProjectionMatrix() const noexcept override;
     
+    virtual void SetPosition(const glm::vec3& position) override;
     virtual const glm::vec3& GetPosition() const noexcept override;
-    virtual const glm::vec3& GetFrontDirection() const noexcept override;
     
-protected:
-    virtual void Update(float deltaTime) override;
+    virtual void SetRotation(const glm::vec2& rotation) override;
+    virtual const glm::vec2& GetRotation() const noexcept override;
+    
+    virtual const glm::vec3& GetFrontDirection() const noexcept override;
     
 private:
     glm::mat4 CalculateViewMatrix() const noexcept;
     glm::mat4 CalculateProjectionMatrix() const noexcept;
     glm::vec3 CalculateFrontDirection() const noexcept;
     
-    void HandleInput(float deltaTime);
-    
-    void HandleMouse(float deltaTime);
-    void HandleKeyboard(float deltaTime);
-    
 private:
+    const float m_fov;
+    
     mutable bool m_isViewMatrixDirty = true;
     mutable bool m_isProjectionMatrixDirty = true;
     mutable bool m_isFrontDirectionDirty = true;
@@ -40,18 +36,5 @@ private:
     mutable glm::vec3 m_frontDirection;
     
     glm::vec3 m_position;
-    
-    float m_yaw = 0.0f;
-    float m_pitch = 0.0f;
-    
-    bool m_initialized = false;
-    
-    bool m_freeLook = false;
-    GLenum m_polygonMode = GL_FILL;
-    
-    const float m_fov;
-    const float m_moveSpeed;
-    const float m_lookSpeed;
-    
-    const glm::vec3 m_initialPosition;
+    glm::vec2 m_rotation;
 };

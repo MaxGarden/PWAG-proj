@@ -27,6 +27,9 @@ SET(MAZE_SOURCES
 	Source/Maze/SceneManager/SceneManager.cpp
 	Source/Maze/SceneManager/SceneManager.h
 
+	Source/Maze/FPSController/FPSController.h
+	Source/Maze/FPSController/FPSController.cpp
+
 	Source/Maze/Camera/Camera.cpp
 	Source/Maze/Camera/Camera.h
 	Source/Maze/Camera/FPSCamera.cpp

@@ -37,8 +37,6 @@ void SceneManager::InitScene()
 
 void SceneManager::DrawScene()
 {
-    m_camera->Update();
-    
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -49,6 +47,18 @@ void SceneManager::DrawScene()
 void SceneManager::AddObject(std::unique_ptr<Object>&& object) noexcept
 {
     m_objects.emplace_back(std::move(object));
+}
+
+void SceneManager::VisitObjects(const std::function<bool(const Object&)>& visitor) const noexcept
+{
+    if(!visitor)
+        return;
+    
+    for(const auto& object : m_objects)
+    {
+        if(!visitor(*object))
+            break;
+    }
 }
 
 Shader* SceneManager::EnsureShader(const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName) const noexcept
@@ -64,4 +74,9 @@ Shader* SceneManager::EnsureShader(const std::string& vertexShaderFileName, cons
     
     m_shadersMap.emplace(shaderTuple, std::move(shader));
     return EnsureShader(vertexShaderFileName, fragmentShaderFileName);
+}
+
+Camera& SceneManager::GetMainCamera()
+{
+    return *m_camera;
 }

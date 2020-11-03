@@ -1,12 +1,11 @@
 #pragma once
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
 #include <memory>
 #include <vector>
 #include <tuple>
 #include <map>
+#include <functional>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,15 +17,17 @@
 class SceneManager
 {
 public:
-
 	SceneManager(std::unique_ptr<Camera>&& camera);
 	~SceneManager();
     
 	void DrawScene();
     
     void AddObject(std::unique_ptr<Object>&& object) noexcept;
+    void VisitObjects(const std::function<bool(const Object& object)>& visitor) const noexcept;
     
     Shader* EnsureShader(const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName) const noexcept;
+    
+    Camera& GetMainCamera();
 
 private:
     void InitScene();

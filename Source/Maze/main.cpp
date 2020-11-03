@@ -4,6 +4,7 @@
 #include "SceneManager/SceneManager.h"
 #include "Camera/FPSCamera.h"
 #include "MapLoader/MapLoader.h"
+#include "FPSController/FPSController.h"
 
 #include <memory>
 
@@ -46,12 +47,15 @@ int main()
 	}
     
     SceneManager sceneManager { std::make_unique<FPSCamera>(window) };
+    FPSController fpsContoller { sceneManager };
     
     MapLoader mapLoader{sceneManager};
     mapLoader.LoadFromBitmap("Data/maze.bmp", glm::vec3{-50.0f, -5.1f, -50.0f}, glm::vec2{2.0f, 2.0f});
     
-    while (!glfwWindowShouldClose(window)) {
-        sceneManager.SceneManager::DrawScene();
+    while (!glfwWindowShouldClose(window))
+    {
+        fpsContoller.Update();
+        sceneManager.DrawScene();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

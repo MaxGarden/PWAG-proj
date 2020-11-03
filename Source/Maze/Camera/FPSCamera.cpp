@@ -1,19 +1,16 @@
 #include "FPSCamera.h"
+#include <glm/gtc/matrix_transform.hpp>
 
-const glm::vec3 FPSCamera::s_upDirection =
+static const glm::vec3 upDirection =
 {
     0.0f,
     1.0f,
     0.0f
 };
 
-FPSCamera::FPSCamera(GLFWwindow* window, glm::vec3 position, float fov, float moveSpeed, float lookSpeed) :
+FPSCamera::FPSCamera(GLFWwindow* window, float fov) :
     Camera(window),
-    m_position {position},
-    m_fov {fov},
-    m_moveSpeed {moveSpeed},
-    m_lookSpeed {lookSpeed},
-    m_initialPosition {position}
+    m_fov {fov}
 {
 }
 
@@ -39,9 +36,37 @@ const glm::mat4& FPSCamera::GetProjectionMatrix() const noexcept
     return m_projectionMatrix;
 }
 
+glm::vec3 FPSCamera::CalculateFrontDirection() const noexcept
+{
+    return glm::normalize(glm::vec3
+    {
+      cos(m_rotation.x) * cos(m_rotation.y),
+      sin(m_rotation.y),
+      sin(m_rotation.x) * cos(m_rotation.y)
+    });
+}
+
+void FPSCamera::SetPosition(const glm::vec3& position)
+{
+    m_position = position;
+    m_isViewMatrixDirty = true;
+}
+
 const glm::vec3& FPSCamera::GetPosition() const noexcept
 {
     return m_position;
+}
+
+void FPSCamera::SetRotation(const glm::vec2& rotation)
+{
+    m_rotation = rotation;
+    m_isViewMatrixDirty = true;
+    m_isFrontDirectionDirty = true;
+}
+
+const glm::vec2& FPSCamera::GetRotation() const noexcept
+{
+    return m_rotation;
 }
 
 const glm::vec3& FPSCamera::GetFrontDirection() const noexcept
@@ -55,121 +80,9 @@ const glm::vec3& FPSCamera::GetFrontDirection() const noexcept
     return m_frontDirection;
 }
 
-void FPSCamera::Update(float deltaTime)
-{
-    HandleInput(deltaTime);
-    m_initialized = true;
-}
-
-void FPSCamera::HandleInput(float deltaTime)
-{
-    HandleMouse(deltaTime);
-    HandleKeyboard(deltaTime);
-}
-
-void FPSCamera::HandleMouse(float deltaTime)
-{
-    static const auto epsilon = 0.0001f;
-    
-    const auto window = GetWindow();
-    
-    double cursorPositionX, cursorPositionY;
-    glfwGetCursorPos(window, &cursorPositionX, &cursorPositionY);
-    
-    int windowWidth, windowHeight;
-    glfwGetWindowSize(window, &windowWidth, &windowHeight);
-    
-    const auto cursorCenterPositionX = windowWidth / 2.0;
-    const auto cursorCenterPositionY = windowHeight / 2.0;
-    glfwSetCursorPos(window, cursorCenterPositionX, cursorCenterPositionY);
-    
-    if(!m_initialized)
-        return;
-    
-    const auto deltaX = cursorPositionX - cursorCenterPositionX;
-    const auto deltaY = cursorPositionY - cursorCenterPositionY;
-    
-    if (abs(deltaX) > epsilon)
-    {
-        m_yaw += m_lookSpeed * deltaX;
-        m_isViewMatrixDirty = true;
-        m_isFrontDirectionDirty = true;
-    }
-    
-    if (abs(deltaY) > epsilon)
-    {
-        m_pitch -= m_lookSpeed * deltaY;
-        m_pitch = fmin(glm::radians(89.0f), fmax(glm::radians(-89.0f), m_pitch));
-        m_isViewMatrixDirty = true;
-        m_isFrontDirectionDirty = true;
-    }
-}
-
-void FPSCamera::HandleKeyboard(float deltaTime)
-{
-    static auto canChangeFreeLookMode = true;
-    static auto canChangePolygonMode = true;
-    
-    glm::vec3 cameraRight = glm::normalize(glm::cross(s_upDirection, GetFrontDirection()));
-    
-    const auto window = GetWindow();
-    const auto addToPosition = [this](const auto& delta)
-    {
-        m_position += delta;
-
-        if(!m_freeLook)
-            m_position.y = m_initialPosition.y;
-        
-        m_isViewMatrixDirty = true;
-    };
-    
-    const auto isKeyPressed = [&window](int keyCode)
-    {
-        return glfwGetKey(window, keyCode) == GLFW_PRESS;
-    };
-    
-    const auto& cameraDirection = GetFrontDirection();
-    
-    if (isKeyPressed(GLFW_KEY_UP) || isKeyPressed(GLFW_KEY_W))
-        addToPosition(cameraDirection * deltaTime * m_moveSpeed);
-    
-    if (isKeyPressed(GLFW_KEY_DOWN) || isKeyPressed(GLFW_KEY_S))
-        addToPosition(-cameraDirection * deltaTime * m_moveSpeed);
-    
-    if (isKeyPressed(GLFW_KEY_RIGHT) || isKeyPressed(GLFW_KEY_D))
-        addToPosition(-cameraRight * deltaTime * m_moveSpeed);
-    
-    if (isKeyPressed(GLFW_KEY_LEFT) || isKeyPressed(GLFW_KEY_A))
-        addToPosition(cameraRight * deltaTime * m_moveSpeed);
-    
-    if(isKeyPressed(GLFW_KEY_F))
-    {
-        if(canChangeFreeLookMode)
-        {
-            canChangeFreeLookMode = false;
-            m_freeLook = !m_freeLook;
-            addToPosition(glm::vec3{});
-        }
-    }
-    else
-        canChangeFreeLookMode = true;
-    
-    if(isKeyPressed(GLFW_KEY_G))
-    {
-        if(canChangePolygonMode)
-        {
-            canChangePolygonMode = false;
-            m_polygonMode = m_polygonMode == GL_FILL ? GL_LINE : GL_FILL;
-            glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
-        }
-    }
-    else
-        canChangePolygonMode = true;
-}
-
 glm::mat4 FPSCamera::CalculateViewMatrix() const noexcept
 {
-    return glm::lookAt(m_position, m_position + GetFrontDirection(), s_upDirection);
+    return glm::lookAt(m_position, m_position + GetFrontDirection(), upDirection);
 }
 
 glm::mat4 FPSCamera::CalculateProjectionMatrix() const noexcept
@@ -179,14 +92,4 @@ glm::mat4 FPSCamera::CalculateProjectionMatrix() const noexcept
     
     const auto aspectRatio = static_cast<float>(windowWidth) / windowHeight;
     return glm::perspective(m_fov, aspectRatio, 0.1f, 500.0f);
-}
-
-glm::vec3 FPSCamera::CalculateFrontDirection() const noexcept
-{
-    return glm::normalize(glm::vec3
-    {
-        cos(m_yaw) * cos(m_pitch),
-        sin(m_pitch),
-        sin(m_yaw) * cos(m_pitch)
-    });
 }

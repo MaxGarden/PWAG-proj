@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include <algorithm>
 
 SceneManager::SceneManager(std::unique_ptr<Camera>&& camera) :
     m_camera {std::move(camera)}
@@ -47,6 +48,20 @@ void SceneManager::DrawScene()
 void SceneManager::AddObject(std::unique_ptr<Object>&& object) noexcept
 {
     m_objects.emplace_back(std::move(object));
+}
+
+void SceneManager::DestroyObject(const Object *object)
+{
+    const auto iterator = std::find_if(std::begin(m_objects), std::end(m_objects), [&object](const auto& objectUniquePtr)
+    {
+        return objectUniquePtr.get() == object;
+    });
+    
+    if(iterator == std::cend(m_objects))
+        return;
+    
+    (*iterator)->Destroy();
+    m_objects.erase(iterator);
 }
 
 void SceneManager::VisitObjects(const std::function<bool(const Object&)>& visitor) const noexcept

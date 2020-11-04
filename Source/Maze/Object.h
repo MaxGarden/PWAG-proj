@@ -17,7 +17,17 @@
 class Object
 {
 public:
+    enum Flags : long
+    {
+        Colliding = 1 << 0,
+        Collectable = 1 << 1
+    };
+    
+public:
 	Object(const std::string& textureName, const Shader& shader, const float* vertices, const unsigned int* indices , unsigned int verticesCount);
+    
+    void SetFlags(long flags);
+    long GetFlags() const noexcept;
     
     void SetPosition(const glm::vec3& position);
     const glm::vec3& GetPosition() const noexcept;
@@ -47,6 +57,8 @@ private:
     const std::string m_textureName;
     const unsigned int m_verticesCount;
     const Shader& m_shader;
+    
+    long m_flags = 0;
     
     glm::vec4 m_initialBoxColliderMin;
     glm::vec4 m_initialBoxColliderMax;

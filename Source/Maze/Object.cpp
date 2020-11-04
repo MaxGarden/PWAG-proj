@@ -36,6 +36,16 @@ Object::Object(const std::string& textureName, const Shader& shader, const float
 	m_shader.Use();
 }
 
+void Object::SetFlags(long flags)
+{
+    m_flags = flags;
+}
+
+long Object::GetFlags() const noexcept
+{
+    return m_flags;
+}
+
 void Object::SetPosition(const glm::vec3& position)
 {
     m_position = position;

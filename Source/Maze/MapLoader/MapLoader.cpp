@@ -100,27 +100,31 @@ std::unique_ptr<Object> MapLoader::CreateWall(const glm::vec3& position, const g
         position.x + size.x,    position.y,                 position.z,             0.0f,   0.0f,   -1.0f,  1.0f,   0.0f,
         position.x + size.x,    position.y + wallHeight,    position.z,             0.0f,   0.0f,   -1.0f,  1.0f,   1.0f,
         position.x,             position.y + wallHeight,    position.z,             0.0f,   0.0f,   -1.0f,  0.0f,   1.0f,
+    
         position.x,             position.y,                 position.z + size.y,    0.0f,   0.0f,   1.0f,   0.0f,   0.0f,
         position.x + size.x,    position.y,                 position.z + size.y,    0.0f,   0.0f,   1.0f,   1.0f,   0.0f,
         position.x + size.x,    position.y + wallHeight,    position.z + size.y,    0.0f,   0.0f,   1.0f,   1.0f,   1.0f,
         position.x,             position.y + wallHeight,    position.z + size.y,    0.0f,   0.0f,   1.0f,   0.0f,   1.0f,
-        position.x,             position.y + wallHeight,    position.z + size.y,    -1.0f,  0.0f,   0.0f,   1.0f,   0.0f,
-        position.x,             position.y + wallHeight,    position.z,             -1.0f,  0.0f,   0.0f,   1.0f,   1.0f,
-        position.x,             position.y,                 position.z,             -1.0f,  0.0f,   0.0f,   0.0f,   1.0f,
-        position.x,             position.y,                 position.z + size.y,    -1.0f,  0.0f,   0.0f,   0.0f,   0.0f,
-        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    1.0f,   0.0f,   0.0f,   1.0f,   0.0f,
-        position.x + size.x,    position.y + wallHeight,    position.z,             1.0f,   0.0f,   0.0f,   1.0f,   1.0f,
-        position.x + size.x,    position.y,                 position.z,             1.0f,   0.0f,   0.0f,   0.0f,   1.0f,
-        position.x + size.x,    position.y,                 position.z + size.y,    1.0f,   0.0f,   0.0f,   0.0f,   0.0f,
-        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    1.0f,   0.0f,   0.0f,   1.0f,   0.0f,
-        position.x,             position.y,                 position.z,             0.0f,   -1.0f,  0.0f,   0.0f,   1.0f,
-        position.x + size.x,    position.y,                 position.z,             0.0f,   -1.0f,  0.0f,   1.0f,   1.0f,
-        position.x + size.x,    position.y,                 position.z + size.y,    0.0f,   -1.0f,  0.0f,   1.0f,   0.0f,
-        position.x,             position.y,                 position.z + size.y,    0.0f,   -1.0f,  0.0f,   0.0f,   0.0f,
-        position.x,             position.y + wallHeight,    position.z,             0.0f,   1.0f,   0.0f,   0.0f,   1.0f,
-        position.x + size.x,    position.y + wallHeight,    position.z,             0.0f,   1.0f,   0.0f,   1.0f,   1.0f,
-        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    0.0f,   1.0f,   0.0f,   1.0f,   0.0f,
-        position.x,             position.y + wallHeight,    position.z + size.y,    0.0f,   1.0f,   0.0f,   0.0f,   0.0f,
+        
+        position.x,             position.y + wallHeight,    position.z + size.y,    -1.0f,  0.0f,   0.0f,   1.0f,   1.0f,
+        position.x,             position.y + wallHeight,    position.z,             -1.0f,  0.0f,   0.0f,   0.0f,   1.0f,
+        position.x,             position.y,                 position.z,             -1.0f,  0.0f,   0.0f,   0.0f,   0.0f,
+        position.x,             position.y,                 position.z + size.y,    -1.0f,  0.0f,   0.0f,   1.0f,   0.0f,
+        
+        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    1.0f,   0.0f,   0.0f,   1.0f,   1.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z,             1.0f,   0.0f,   0.0f,   0.0f,   1.0f,
+        position.x + size.x,    position.y,                 position.z,             1.0f,   0.0f,   0.0f,   0.0f,   0.0f,
+        position.x + size.x,    position.y,                 position.z + size.y,    1.0f,   0.0f,   0.0f,   1.0f,   0.0f,
+        
+        position.x,             position.y,                 position.z,             0.0f,   -1.0f,  0.0f,   0.0f,   0.0f,
+        position.x + size.x,    position.y,                 position.z,             0.0f,   -1.0f,  0.0f,   1.0f,   0.0f,
+        position.x + size.x,    position.y,                 position.z + size.y,    0.0f,   -1.0f,  0.0f,   1.0f,   1.0f,
+        position.x,             position.y,                 position.z + size.y,    0.0f,   -1.0f,  0.0f,   0.0f,   1.0f,
+        
+        position.x,             position.y + wallHeight,    position.z,             0.0f,   1.0f,   0.0f,   0.0f,   0.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z,             0.0f,   1.0f,   0.0f,   1.0f,   0.0f,
+        position.x + size.x,    position.y + wallHeight,    position.z + size.y,    0.0f,   1.0f,   0.0f,   1.0f,   1.0f,
+        position.x,             position.y + wallHeight,    position.z + size.y,    0.0f,   1.0f,   0.0f,   0.0f,   1.0f,
     };
     
     const unsigned int indices[] =
@@ -135,16 +139,16 @@ std::unique_ptr<Object> MapLoader::CreateWall(const glm::vec3& position, const g
         10, 11, 8,
         
         12, 13, 14,
-        14, 15, 16,
+        14, 15, 12,
         
-        17, 18, 19,
-        19, 20, 17,
+        16, 17, 18,
+        18, 19, 16,
         
-        21, 22, 23,
-        23, 24, 21
+        20, 21, 22,
+        22, 23, 20
     };
 
-    auto result = std::make_unique<Object>("Data/Textures/cobble.jpg", *GetShader(), vertices, indices, 36);
+    auto result = std::make_unique<Object>(std::vector<std::string>{"Data/Textures/cobble.jpg"}, *GetShader(), vertices, indices, 36);
     result->SetFlags(Object::Colliding);
     
     return result;
@@ -156,7 +160,7 @@ std::unique_ptr<Object> MapLoader::CreateCoin(const glm::vec3& position, const g
     if(!modelData.IsValid)
         return nullptr;
     
-    auto result = std::make_unique<Object>("Data/Textures/chest.jpg", *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
+    auto result = std::make_unique<Object>(std::vector<std::string>{"Data/Textures/chest.jpg"}, *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
     
     result->SetRotation(glm::vec3{-90.0f, 0.0f, 0.0f});
     result->SetScale(glm::vec3{0.03f, 0.03f, 0.03f});

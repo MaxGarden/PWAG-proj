@@ -19,10 +19,10 @@ void SceneManager::InitScene()
 
 	float floorVertices[] =
     {
-		 150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 1.0f, 1.0f,
-		 150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 1.0f, 0.0f,
+		 150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 75.0f, 75.0f,
+		 150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 75.0f, 0.0f,
 		-150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 0.0f, 0.0f,
-		-150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 0.0f, 1.0f,
+		-150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 0.0f, 75.0f,
 	};
     
 	unsigned int floorIndices[] =
@@ -33,7 +33,7 @@ void SceneManager::InitScene()
 
     const auto shader = EnsureShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
     
-    AddObject(std::make_unique<Object>("Data/Textures/grass.jpg", *shader, floorVertices, floorIndices, 6));
+    AddObject(std::make_unique<Object>(std::vector<std::string>{"Data/Textures/grass.jpg"}, *shader, floorVertices, floorIndices, 6));
 }
 
 void SceneManager::DrawScene()

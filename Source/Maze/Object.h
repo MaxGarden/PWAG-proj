@@ -13,6 +13,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
+#include <vector>
 
 class Object
 {
@@ -24,7 +25,7 @@ public:
     };
     
 public:
-	Object(const std::string& textureName, const Shader& shader, const float* vertices, const unsigned int* indices , unsigned int verticesCount);
+	Object(std::vector<std::string>&& texturesNames, const Shader& shader, const float* vertices, const unsigned int* indices , unsigned int verticesCount);
     
     void SetFlags(long flags);
     long GetFlags() const noexcept;
@@ -54,7 +55,7 @@ private:
     void RecalculateBoxColliderIfNeeded() const noexcept;
     
 private:
-    const std::string m_textureName;
+    const std::vector<std::string> m_texturesNames;
     const unsigned int m_verticesCount;
     const Shader& m_shader;
     
@@ -74,6 +75,8 @@ private:
     mutable glm::vec3 m_boxColliderMin;
     mutable glm::vec3 m_boxColliderMax;
     
-    unsigned int VBO, VAO, EBO;
+    unsigned int m_vao;
+    unsigned int m_vbo;
+    unsigned int m_ebo;
 };
 

@@ -18,12 +18,16 @@ private:
     void HandleMouse(float deltaTime);
     void HandleKeyboard(float deltaTime);
     
+    bool CanMoveOnPosition(const glm::vec3& position, float radius = 1.0f) const noexcept;
+    
     void RecalculateDirectionsIfNeeded() const noexcept;
     
     const glm::vec3& GetRightDirection() const noexcept;
     
     const glm::vec3& GetMoveFrontDirection() const noexcept;
     const glm::vec3& GetMoveRightDirection() const noexcept;
+    
+    void GatherCollectibles(float radius = 3.0f) const;
     
 private:
     const glm::vec3 m_initialPosition;

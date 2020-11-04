@@ -1,4 +1,5 @@
 #include "FPSController.h"
+#include <vector>
 
 static const glm::vec3 upDirection =
 {
@@ -13,6 +14,10 @@ FPSController::FPSController(SceneManager& sceneManager, glm::vec3 position, flo
     m_lookSpeed{lookSpeed},
     m_sceneManager{sceneManager}
 {
+    auto& camera = m_sceneManager.GetMainCamera();
+    
+    camera.SetPosition(m_initialPosition);
+    camera.SetRotation({});
 }
 
 void FPSController::Update()
@@ -99,20 +104,12 @@ void FPSController::HandleKeyboard(float deltaTime)
             auto newPositionX = newPosition;
             newPositionX.z = cameraPosition.z;
             
-            auto canMoveX = true;
-            m_sceneManager.VisitObjects([&newPositionX, &canMoveX](const auto& object)
-            {
-                return canMoveX = !object.IsCollidingWithSphere(newPositionX, 1.0f);
-            });
+            const auto canMoveX = CanMoveOnPosition(newPositionX);
             
             auto newPositionZ = newPosition;
             newPositionZ.x = cameraPosition.x;
             
-            auto canMoveZ = true;
-            m_sceneManager.VisitObjects([&newPositionZ, &canMoveZ](const auto& object)
-            {
-                return canMoveZ = !object.IsCollidingWithSphere(newPositionZ, 1.0f);
-            });
+            const auto canMoveZ = CanMoveOnPosition(newPositionZ);
             
             canMove = canMoveX || canMoveZ;
             newPosition.x = canMoveX ? newPosition.x : cameraPosition.x;
@@ -123,6 +120,9 @@ void FPSController::HandleKeyboard(float deltaTime)
         {
             m_isAnyDirectionDirty = true;
             camera.SetPosition(newPosition);
+            
+            if(!m_freeLook)
+                GatherCollectibles();
         }
     };
     
@@ -171,6 +171,20 @@ void FPSController::HandleKeyboard(float deltaTime)
         canChangePolygonMode = true;
 }
 
+bool FPSController::CanMoveOnPosition(const glm::vec3& position, float radius) const noexcept
+{
+    auto result = true;
+    m_sceneManager.VisitObjects([&position, &result, radius](const auto& object)
+    {
+        if(!(object.GetFlags() & Object::Colliding))
+            return true;
+        
+        return result = !object.IsCollidingWithSphere(position, radius);
+    });
+    
+    return result;
+}
+
 void FPSController::RecalculateDirectionsIfNeeded() const noexcept
 {
     if(!m_isAnyDirectionDirty)
@@ -207,4 +221,24 @@ const glm::vec3& FPSController::GetMoveRightDirection() const noexcept
 {
     RecalculateDirectionsIfNeeded();
     return m_moveRightDirection;
+}
+
+void FPSController::GatherCollectibles(float radius) const
+{
+    const auto& position = m_sceneManager.GetMainCamera().GetPosition();
+    std::vector<const Object*> objectsToDestroy;
+    
+    m_sceneManager.VisitObjects([&objectsToDestroy, &position, radius](const auto& object)
+    {
+        if(!(object.GetFlags() & Object::Collectable))
+            return true;
+        
+        if(object.IsCollidingWithSphere(position, radius))
+            objectsToDestroy.emplace_back(&object);
+        
+        return true;
+    });
+    
+    for(const auto& object : objectsToDestroy)
+        m_sceneManager.DestroyObject(object);
 }

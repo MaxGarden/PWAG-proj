@@ -144,7 +144,10 @@ std::unique_ptr<Object> MapLoader::CreateWall(const glm::vec3& position, const g
         23, 24, 21
     };
 
-    return std::make_unique<Object>("Data/Textures/cobble.jpg", *GetShader(), vertices, indices, 36);
+    auto result = std::make_unique<Object>("Data/Textures/cobble.jpg", *GetShader(), vertices, indices, 36);
+    result->SetFlags(Object::Colliding);
+    
+    return result;
 }
 
 std::unique_ptr<Object> MapLoader::CreateCoin(const glm::vec3& position, const glm::vec2& size) const noexcept
@@ -156,8 +159,9 @@ std::unique_ptr<Object> MapLoader::CreateCoin(const glm::vec3& position, const g
     auto result = std::make_unique<Object>("Data/Textures/chest.jpg", *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
     
     result->SetRotation(glm::vec3{-90.0f, 0.0f, 0.0f});
-    result->SetScale(glm::vec3{0.02f, 0.02f, 0.02f});
+    result->SetScale(glm::vec3{0.03f, 0.03f, 0.03f});
     result->SetPosition(position);
+    result->SetFlags(Object::Collectable);
     
     return result;
 }

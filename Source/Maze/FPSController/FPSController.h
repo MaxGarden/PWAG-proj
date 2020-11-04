@@ -27,7 +27,7 @@ private:
     const glm::vec3& GetMoveFrontDirection() const noexcept;
     const glm::vec3& GetMoveRightDirection() const noexcept;
     
-    void GatherCollectibles(float radius = 3.0f) const;
+    void GatherCollectibles(float radius = 5.0f) const;
     
 private:
     const glm::vec3 m_initialPosition;

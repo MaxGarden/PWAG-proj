@@ -2,44 +2,9 @@
 #include "ResourcesManager.h"
 
 static const auto componentsCount = 8;
-static const auto texturesIndices = new int[]
-{
-    GL_TEXTURE0,
-    GL_TEXTURE1,
-    GL_TEXTURE2,
-    GL_TEXTURE3,
-    GL_TEXTURE4,
-    GL_TEXTURE5,
-    GL_TEXTURE6,
-    GL_TEXTURE7,
-    GL_TEXTURE8,
-    GL_TEXTURE9,
-    GL_TEXTURE10,
-    GL_TEXTURE11,
-    GL_TEXTURE12,
-    GL_TEXTURE13,
-    GL_TEXTURE14,
-    GL_TEXTURE15,
-    GL_TEXTURE16,
-    GL_TEXTURE17,
-    GL_TEXTURE18,
-    GL_TEXTURE19,
-    GL_TEXTURE20,
-    GL_TEXTURE21,
-    GL_TEXTURE22,
-    GL_TEXTURE23,
-    GL_TEXTURE24,
-    GL_TEXTURE25,
-    GL_TEXTURE26,
-    GL_TEXTURE27,
-    GL_TEXTURE28,
-    GL_TEXTURE29,
-    GL_TEXTURE30,
-    GL_TEXTURE31
-};
 
-Object::Object(std::vector<std::string>&& texturesNames, const Shader& shader, const float* vertices, unsigned const int* indices, unsigned int verticesCount) :
-    m_texturesNames{std::move(texturesNames)},
+Object::Object(std::string&& textureName, const Shader& shader, const float* vertices, unsigned const int* indices, unsigned int verticesCount) :
+    m_textureName{std::move(textureName)},
     m_verticesCount{verticesCount},
     m_shader{shader}
 {
@@ -67,6 +32,14 @@ Object::Object(std::vector<std::string>&& texturesNames, const Shader& shader, c
 	glBindVertexArray(0);
 
     IntializeBoxCollider(vertices, verticesCount);
+    
+    m_material = Material
+    {
+        glm::vec3{0.2f, 0.2f, 0.2f},
+        glm::vec3{0.2f, 0.2f, 0.2f},
+        glm::vec3{0.0f, 0.0f, 0.0f},
+        0.0f
+    };
     
 	m_shader.Use();
 }
@@ -114,6 +87,16 @@ const glm::vec3& Object::GetScale() const noexcept
     return m_scale;
 }
 
+void Object::SetMaterial(const Material& material)
+{
+    m_material = material;
+}
+
+const Material& Object::GetMaterial() const noexcept
+{
+    return m_material;
+}
+
 bool Object::IsCollidingWithSphere(const glm::vec3& center, float radius) const noexcept
 {
     RecalculateBoxColliderIfNeeded();
@@ -141,12 +124,10 @@ void Object::Draw()
     m_shader.Update();
     m_shader.SetColor(glm::vec3{1.0f, 1.0f, 1.0f});
     m_shader.SetModelMatrix(GetModelMatrix());
+    m_shader.SetMaterial(GetMaterial());
     
-    for(auto i = 0; i < m_texturesNames.size(); ++i)
-    {
-        glActiveTexture(texturesIndices[i]);
-        glBindTexture(GL_TEXTURE_2D, ResourcesManager::GetInstance().EnsureTextureId(m_texturesNames[i]));
-    }
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, ResourcesManager::GetInstance().EnsureTextureId(m_textureName));
     
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, 0);

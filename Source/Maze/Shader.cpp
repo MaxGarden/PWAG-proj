@@ -22,6 +22,14 @@ void Shader::SetModelMatrix(const glm::mat4& modelMatrix) const noexcept
     SetMat4("modelMatrix", modelMatrix);
 }
 
+void Shader::SetMaterial(const Material& material) const noexcept
+{
+    SetVec3("material.ambient", material.ambient);
+    SetVec3("material.diffuse", material.diffuse);
+    SetVec3("material.specular", material.specular);
+    SetFloat("material.shininess", material.shininess);
+}
+
 char* Shader::ReadShader(const char* aShaderFile)
 {
 	FILE* filePointer = fopen(aShaderFile, "rb");
@@ -135,8 +143,10 @@ void Shader::Update() const
     
     SetVec3("light.position", cameraPosition);
     SetVec3("light.frontDirection", cameraFrontDirection);
-    SetVec3("light.ambient", glm::vec3{0.1f, 0.1f, 0.1f});
+    SetVec3("light.ambient", glm::vec3{1.0f, 1.0f, 1.0f});
     SetVec3("light.diffuse", glm::vec3{0.8f, 0.8f, 0.8f});
+    SetVec3("light.specular", glm::vec3{0.8f, 0.8f, 0.8f});
+    SetVec3("light.specularPosition", glm::vec3{0.0f, 50.0f, 0.0f});
             
     SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
     SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));

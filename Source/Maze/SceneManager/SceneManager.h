@@ -35,6 +35,9 @@ public:
 private:
     void InitScene();
     
+    void AddFloor();
+    void AddSkybox();
+    
 private:
     std::unique_ptr<Camera> m_camera;
     std::vector<std::unique_ptr<Object>> m_objects;

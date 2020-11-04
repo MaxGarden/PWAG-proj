@@ -25,8 +25,8 @@ private:
     std::unique_ptr<Object> CreateObject(unsigned char type, const glm::vec3& position, const glm::vec2& size) const noexcept;
     
     std::unique_ptr<Object> CreateWall(const glm::vec3& position, const glm::vec2& size) const noexcept;
-    
-    std::unique_ptr<Object> CreateCoin(const glm::vec3& position, const glm::vec2& size) const noexcept;
+    std::unique_ptr<Object> CreateChest(const glm::vec3& position, const glm::vec2& size) const noexcept;
+    std::unique_ptr<Object> CreateChestAquarium(const glm::vec3& position, const glm::vec2& size) const noexcept;
     
 private:
     SceneManager& m_sceneManager;

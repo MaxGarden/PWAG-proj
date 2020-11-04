@@ -13,7 +13,6 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
-#include <vector>
 
 class Object
 {
@@ -25,7 +24,7 @@ public:
     };
     
 public:
-	Object(std::vector<std::string>&& texturesNames, const Shader& shader, const float* vertices, const unsigned int* indices , unsigned int verticesCount);
+	Object(std::string&& textureName, const Shader& shader, const float* vertices, const unsigned int* indices , unsigned int verticesCount);
     
     void SetFlags(long flags);
     long GetFlags() const noexcept;
@@ -38,6 +37,9 @@ public:
     
     void SetScale(const glm::vec3& scale);
     const glm::vec3& GetScale() const noexcept;
+    
+    void SetMaterial(const Material& material);
+    const Material& GetMaterial() const noexcept;
     
     bool IsCollidingWithSphere(const glm::vec3& center, float radius) const noexcept;
     
@@ -55,11 +57,13 @@ private:
     void RecalculateBoxColliderIfNeeded() const noexcept;
     
 private:
-    const std::vector<std::string> m_texturesNames;
+    const std::string m_textureName;
     const unsigned int m_verticesCount;
     const Shader& m_shader;
     
     long m_flags = 0;
+    
+    Material m_material;
     
     glm::vec4 m_initialBoxColliderMin;
     glm::vec4 m_initialBoxColliderMax;

@@ -17,23 +17,8 @@ void SceneManager::InitScene()
 {
 	glEnable(GL_DEPTH_TEST);
 
-	float floorVertices[] =
-    {
-		 150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 75.0f, 75.0f,
-		 150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 75.0f, 0.0f,
-		-150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 0.0f, 0.0f,
-		-150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 0.0f, 75.0f,
-	};
-    
-	unsigned int floorIndices[] =
-    {
-	   0, 1, 3,
-	   1, 2, 3
-	};
-
-    const auto shader = EnsureShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
-    
-    AddObject(std::make_unique<Object>(std::vector<std::string>{"Data/Textures/grass.jpg"}, *shader, floorVertices, floorIndices, 6));
+    AddFloor();
+    AddSkybox();
 }
 
 void SceneManager::DrawScene()
@@ -94,4 +79,102 @@ Shader* SceneManager::EnsureShader(const std::string& vertexShaderFileName, cons
 Camera& SceneManager::GetMainCamera()
 {
     return *m_camera;
+}
+
+void SceneManager::AddFloor()
+{
+    float floorVertices[] =
+    {
+         150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 75.0f, 75.0f,
+         150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 75.0f, 0.0f,
+        -150.0f,     -5.0f,       -150.0f,      0.0f,   1.0f,   0.0f, 0.0f, 0.0f,
+        -150.0f,     -5.0f,       150.0f,       0.0f,   1.0f,   0.0f, 0.0f, 75.0f,
+    };
+    
+    unsigned int floorIndices[] =
+    {
+       0, 1, 3,
+       1, 2, 3
+    };
+
+    const auto shader = EnsureShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
+    auto floor = std::make_unique<Object>("Data/Textures/grass.jpg", *shader, floorVertices, floorIndices, 6);
+    auto material = floor->GetMaterial();
+    
+    material.diffuse = glm::vec3{0.8f, 0.8f, 0.8f};
+    material.shininess = 1.1f;
+    
+    floor->SetMaterial(material);
+    
+    AddObject(std::move(floor));
+}
+
+void SceneManager::AddSkybox()
+{
+    static const auto skyboxSize = 150.0f;
+    static const auto position = glm::vec3{0.0f, 0.0f, 0.0f};
+    
+    const float vertices[] =
+    {
+        position.x - skyboxSize,    position.y - skyboxSize,    position.z - skyboxSize,    0.0f,   0.0f,   -1.0f,  0.50f,  0.667f,
+        position.x + skyboxSize,    position.y - skyboxSize,    position.z - skyboxSize,    0.0f,   0.0f,   -1.0f,  0.75f,  0.667f,
+        position.x + skyboxSize,    position.y + skyboxSize,    position.z - skyboxSize,    0.0f,   0.0f,   -1.0f,  0.75f,  0.334f,
+        position.x - skyboxSize,    position.y + skyboxSize,    position.z - skyboxSize,    0.0f,   0.0f,   -1.0f,  0.50f,  0.334f,
+    
+        position.x - skyboxSize,    position.y - skyboxSize,    position.z + skyboxSize,    0.0f,   0.0f,   1.0f,   0.25f,   0.667f,
+        position.x + skyboxSize,    position.y - skyboxSize,    position.z + skyboxSize,    0.0f,   0.0f,   1.0f,   0.00f,   0.667f,
+        position.x + skyboxSize,    position.y + skyboxSize,    position.z + skyboxSize,    0.0f,   0.0f,   1.0f,   0.00f,   0.334f,
+        position.x - skyboxSize,    position.y + skyboxSize,    position.z + skyboxSize,    0.0f,   0.0f,   1.0f,   0.25f,   0.334f,
+        
+        position.x - skyboxSize,    position.y + skyboxSize,    position.z + skyboxSize,    -1.0f,  0.0f,   0.0f,   0.25f,  0.334f,
+        position.x - skyboxSize,    position.y + skyboxSize,    position.z - skyboxSize,    -1.0f,  0.0f,   0.0f,   0.50f,  0.334f,
+        position.x - skyboxSize,    position.y - skyboxSize,    position.z - skyboxSize,    -1.0f,  0.0f,   0.0f,   0.50f,  0.667f,
+        position.x - skyboxSize,    position.y - skyboxSize,    position.z + skyboxSize,    1.0f,  0.0f,   0.0f,    0.25f,   0.667f,
+        
+        position.x + skyboxSize,    position.y + skyboxSize,    position.z + skyboxSize,    1.0f,   0.0f,   0.0f,   1.00f,   0.334f,
+        position.x + skyboxSize,    position.y + skyboxSize,    position.z - skyboxSize,    1.0f,   0.0f,   0.0f,   0.75f,   0.334f,
+        position.x + skyboxSize,    position.y - skyboxSize,    position.z - skyboxSize,    1.0f,   0.0f,   0.0f,   0.75f,   0.667f,
+        position.x + skyboxSize,    position.y - skyboxSize,    position.z + skyboxSize,    1.0f,   0.0f,   0.0f,   1.00f,   0.667f,
+        
+        position.x - skyboxSize,    position.y - skyboxSize,    position.z - skyboxSize,    0.0f,   -1.0f,  0.0f,   0.50f,   0.667f,
+        position.x + skyboxSize,    position.y - skyboxSize,    position.z - skyboxSize,    0.0f,   -1.0f,  0.0f,   0.50f,   1.00f,
+        position.x + skyboxSize,    position.y - skyboxSize,    position.z + skyboxSize,    0.0f,   -1.0f,  0.0f,   0.25f,   1.00f,
+        position.x - skyboxSize,    position.y - skyboxSize,    position.z + skyboxSize,    0.0f,   -1.0f,  0.0f,   0.25f,   0.6667f,
+        
+        position.x - skyboxSize,    position.y + skyboxSize,    position.z - skyboxSize,    0.0f,   1.0f,   0.0f,   0.50f,   0.334f,
+        position.x + skyboxSize,    position.y + skyboxSize,    position.z - skyboxSize,    0.0f,   1.0f,   0.0f,   0.50f,   0.00f,
+        position.x + skyboxSize,    position.y + skyboxSize,    position.z + skyboxSize,    0.0f,   1.0f,   0.0f,   0.25f,   0.00f,
+        position.x - skyboxSize,    position.y + skyboxSize,    position.z + skyboxSize,    0.0f,   1.0f,   0.0f,   0.25f,   0.334f
+    };
+    
+    const unsigned int indices[] =
+    {
+        0, 1, 2,
+        2, 3, 0,
+        
+        4, 5, 6,
+        6, 7 ,4,
+        
+        8, 9, 10,
+        10, 11, 8,
+        
+        12, 13, 14,
+        14, 15, 12,
+        
+        16, 17, 18,
+        18, 19, 16,
+        
+        20, 21, 22,
+        22, 23, 20
+    };
+
+    
+    const auto shader = EnsureShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
+    auto skybox = std::make_unique<Object>("Data/Textures/cubemap.png", *shader, vertices, indices, 36);
+    
+    auto material = skybox->GetMaterial();
+    material.ambient = material.diffuse = glm::vec3{1.0f, 1.0f, 1.0f};
+    
+    skybox->SetMaterial(material);
+    AddObject(std::move(skybox));
 }

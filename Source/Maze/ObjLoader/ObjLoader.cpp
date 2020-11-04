@@ -75,7 +75,7 @@ std::unique_ptr<ModelData> ObjLoader::LoadModel(const std::string fileName) cons
             std::string vertex1, vertex2, vertex3;
             unsigned int vertexIndex[4], uvIndex[4], normalIndex[4];
             const auto matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2], &vertexIndex[3], &uvIndex[3], &normalIndex[3] );
-            if (matches != 12)
+            if (matches != 12 && matches != 9)
                 return nullptr;
             
             vertexIndices.emplace_back(vertexIndex[0]);
@@ -88,15 +88,18 @@ std::unique_ptr<ModelData> ObjLoader::LoadModel(const std::string fileName) cons
             normalIndices.emplace_back(normalIndex[1]);
             normalIndices.emplace_back(normalIndex[2]);
             
-            vertexIndices.emplace_back(vertexIndex[0]);
-            vertexIndices.emplace_back(vertexIndex[2]);
-            vertexIndices.emplace_back(vertexIndex[3]);
-            uvIndices    .emplace_back(uvIndex[0]);
-            uvIndices    .emplace_back(uvIndex[2]);
-            uvIndices    .emplace_back(uvIndex[3]);
-            normalIndices.emplace_back(normalIndex[0]);
-            normalIndices.emplace_back(normalIndex[2]);
-            normalIndices.emplace_back(normalIndex[3]);
+            if(matches == 12)
+            {
+                vertexIndices.emplace_back(vertexIndex[0]);
+                vertexIndices.emplace_back(vertexIndex[2]);
+                vertexIndices.emplace_back(vertexIndex[3]);
+                uvIndices    .emplace_back(uvIndex[0]);
+                uvIndices    .emplace_back(uvIndex[2]);
+                uvIndices    .emplace_back(uvIndex[3]);
+                normalIndices.emplace_back(normalIndex[0]);
+                normalIndices.emplace_back(normalIndex[2]);
+                normalIndices.emplace_back(normalIndex[3]);
+            }
         }
         else
         {

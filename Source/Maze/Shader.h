@@ -9,6 +9,15 @@
 
 #include "Camera/Camera.h"
 
+struct Material
+{
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    
+    float shininess;
+};
+
 class Shader
 {
 public:
@@ -17,6 +26,7 @@ public:
     
     void SetColor(const glm::vec3& color) const noexcept;
     void SetModelMatrix(const glm::mat4& modelMatrix) const noexcept;
+    void SetMaterial(const Material& material) const noexcept;
     
     void Use() const;
     void Update() const;

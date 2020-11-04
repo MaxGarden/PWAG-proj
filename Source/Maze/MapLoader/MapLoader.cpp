@@ -85,7 +85,9 @@ std::unique_ptr<Object> MapLoader::CreateObject(unsigned char type, const glm::v
         case 0:
             return CreateWall(position, size);
         case 100:
-            return CreateCoin(position, size);
+            return CreateChest(position, size);
+        case 200:
+            return CreateChestAquarium(position, size);
         default:
             return nullptr;
     }
@@ -148,24 +150,54 @@ std::unique_ptr<Object> MapLoader::CreateWall(const glm::vec3& position, const g
         22, 23, 20
     };
 
-    auto result = std::make_unique<Object>(std::vector<std::string>{"Data/Textures/cobble.jpg"}, *GetShader(), vertices, indices, 36);
+    auto result = std::make_unique<Object>("Data/Textures/cobble.jpg", *GetShader(), vertices, indices, 36);
     result->SetFlags(Object::Colliding);
-    
+        
     return result;
 }
 
-std::unique_ptr<Object> MapLoader::CreateCoin(const glm::vec3& position, const glm::vec2& size) const noexcept
+std::unique_ptr<Object> MapLoader::CreateChest(const glm::vec3& position, const glm::vec2& size) const noexcept
 {
     const auto& modelData = ObjLoader::GetInstance().EnsureModelData("Data/Models/chest.obj");
     if(!modelData.IsValid)
         return nullptr;
     
-    auto result = std::make_unique<Object>(std::vector<std::string>{"Data/Textures/chest.jpg"}, *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
+    auto result = std::make_unique<Object>("Data/Textures/chest.jpg", *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
     
     result->SetRotation(glm::vec3{-90.0f, 0.0f, 0.0f});
     result->SetScale(glm::vec3{0.03f, 0.03f, 0.03f});
     result->SetPosition(position);
     result->SetFlags(Object::Collectable);
+    
+    auto material = result->GetMaterial();
+    
+    material.specular = glm::vec3{0.8f, 0.8f, 0.8f};
+    material.shininess = 0.1f;
+    
+    result->SetMaterial(material);
+    
+    return result;
+}
+
+std::unique_ptr<Object> MapLoader::CreateChestAquarium(const glm::vec3& position, const glm::vec2& size) const noexcept
+{
+    const auto& modelData = ObjLoader::GetInstance().EnsureModelData("Data/Models/chest_aquarium.obj");
+    if(!modelData.IsValid)
+        return nullptr;
+    
+    auto result = std::make_unique<Object>("Data/Textures/chest_aquarium.jpg", *GetShader(), modelData.Vertices.data(), modelData.Indices.data(), modelData.Indices.size());
+    
+    result->SetRotation(glm::vec3{-90.0f, 0.0f, 270.0f});
+    result->SetScale(glm::vec3{0.3f, 0.3f, 0.3f});
+    result->SetPosition(position);
+    result->SetFlags(Object::Collectable);
+    
+    auto material = result->GetMaterial();
+    
+    material.specular = glm::vec3{0.8f, 0.8f, 0.8f};
+    material.shininess = 1.0f;
+    
+    result->SetMaterial(material);
     
     return result;
 }

@@ -35,6 +35,6 @@ private:
     mutable glm::mat4 m_projectionMatrix;
     mutable glm::vec3 m_frontDirection;
     
-    glm::vec3 m_position;
-    glm::vec2 m_rotation;
+    glm::vec3 m_position = {};
+    glm::vec2 m_rotation = {};
 };

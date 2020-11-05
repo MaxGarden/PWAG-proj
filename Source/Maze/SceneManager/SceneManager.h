@@ -23,10 +23,11 @@ public:
 	void DrawScene();
     
     void AddObject(std::unique_ptr<Object>&& object) noexcept;
-    
     void DestroyObject(const Object* object);
     
     void VisitObjects(const std::function<bool(const Object& object)>& visitor) const noexcept;
+    
+    bool IsAnyCollectible() const noexcept;
     
     Shader* EnsureShader(const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName) const noexcept;
     

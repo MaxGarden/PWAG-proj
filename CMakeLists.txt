@@ -22,6 +22,7 @@ SET(MAZE_SOURCES
 	Source/Maze/ResourcesManager.cpp
 
 	Source/Maze/Shaders/frag.fs
+	Source/Maze/Shaders/frag_blend.fs
 	Source/Maze/Shaders/vert.vs
 
 	Source/Maze/SceneManager/SceneManager.cpp

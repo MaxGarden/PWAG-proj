@@ -17,6 +17,9 @@ public:
     virtual void SetRotation(const glm::vec2& rotation) override;
     virtual const glm::vec2& GetRotation() const noexcept override;
     
+    virtual void SetColorMultiplier(const glm::vec3& colorMultiplier) override;
+    virtual const glm::vec3& GetColorMultiplier() const noexcept override;
+    
     virtual const glm::vec3& GetFrontDirection() const noexcept override;
     
 private:
@@ -37,4 +40,6 @@ private:
     
     glm::vec3 m_position = glm::vec3{0.0f, 0.0f, 0.0f};
     glm::vec2 m_rotation = glm::vec2{0.0f, 0.0f};
+    
+    glm::vec3 m_colorMultiplier = glm::vec3{1.0f, 1.0f, 1.0f};
 };

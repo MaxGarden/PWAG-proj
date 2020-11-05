@@ -30,6 +30,11 @@ void Shader::SetMaterial(const Material& material) const noexcept
     SetFloat("material.shininess", material.shininess);
 }
 
+void Shader::SetSecondTexture(unsigned int id) const noexcept
+{
+    SetInteger("secondTexture", id);
+}
+
 char* Shader::ReadShader(const char* aShaderFile)
 {
 	FILE* filePointer = fopen(aShaderFile, "rb");
@@ -101,6 +106,11 @@ void Shader::SetFloat(const char* name, float value) const noexcept
     glUniform1f(glGetUniformLocation(m_shaderProgramHandle, name), value);
 }
 
+void Shader::SetInteger(const char* name, int value) const noexcept
+{
+    glUniform1i(glGetUniformLocation(m_shaderProgramHandle, name), value);
+}
+
 void Shader::Use() const
 {
 	glUseProgram(m_shaderProgramHandle);
@@ -150,4 +160,6 @@ void Shader::Update() const
             
     SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
     SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+
+    SetVec3("colorMultiplier", m_camera.GetColorMultiplier());
 }

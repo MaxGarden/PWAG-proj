@@ -20,6 +20,9 @@ public:
     virtual void SetRotation(const glm::vec2& rotation) = 0;
     virtual const glm::vec2& GetRotation() const noexcept = 0;
     
+    virtual void SetColorMultiplier(const glm::vec3& colorMultiplier) = 0;
+    virtual const glm::vec3& GetColorMultiplier() const noexcept = 0;
+    
     GLFWwindow* GetWindow() const noexcept;
     
 private:

@@ -24,7 +24,7 @@ public:
     };
     
 public:
-	Object(std::string&& textureName, const Shader& shader, const float* vertices, const unsigned int* indices , unsigned int verticesCount);
+	Object(std::string&& textureName, const Shader& shader, const float* vertices, const unsigned int* indices , unsigned int verticesCount, std::string&& secondTextureName = "");
     
     void SetFlags(long flags);
     long GetFlags() const noexcept;
@@ -58,6 +58,7 @@ private:
     
 private:
     const std::string m_textureName;
+    const std::string m_secondTextureName;
     const unsigned int m_verticesCount;
     const Shader& m_shader;
     

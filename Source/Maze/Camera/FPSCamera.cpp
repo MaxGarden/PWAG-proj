@@ -69,6 +69,16 @@ const glm::vec2& FPSCamera::GetRotation() const noexcept
     return m_rotation;
 }
 
+void FPSCamera::SetColorMultiplier(const glm::vec3& colorMultiplier)
+{
+    m_colorMultiplier = colorMultiplier;
+}
+
+const glm::vec3& FPSCamera::GetColorMultiplier() const noexcept
+{
+    return m_colorMultiplier;
+}
+
 const glm::vec3& FPSCamera::GetFrontDirection() const noexcept
 {
     if(m_isFrontDirectionDirty)

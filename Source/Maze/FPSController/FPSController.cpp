@@ -38,6 +38,9 @@ void FPSController::Update(float deltaTime)
 
 void FPSController::HandleInput(float deltaTime)
 {
+    if(!m_sceneManager.IsAnyCollectible())
+        return;
+    
     HandleMouse(deltaTime);
     HandleKeyboard(deltaTime);
 }

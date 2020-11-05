@@ -3,10 +3,11 @@
 
 static const auto componentsCount = 8;
 
-Object::Object(std::string&& textureName, const Shader& shader, const float* vertices, unsigned const int* indices, unsigned int verticesCount) :
+Object::Object(std::string&& textureName, const Shader& shader, const float* vertices, unsigned const int* indices, unsigned int verticesCount, std::string&& secondTextureName) :
     m_textureName{std::move(textureName)},
     m_verticesCount{verticesCount},
-    m_shader{shader}
+    m_shader{shader},
+    m_secondTextureName{std::move(secondTextureName)}
 {
 	glGenVertexArrays(1, &m_vao);
 	glGenBuffers(1, &m_vbo);
@@ -128,6 +129,13 @@ void Object::Draw()
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, ResourcesManager::GetInstance().EnsureTextureId(m_textureName));
+    
+    if(m_secondTextureName.length() > 0)
+    {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, ResourcesManager::GetInstance().EnsureTextureId(m_secondTextureName));
+        m_shader.SetSecondTexture(1);
+    }
     
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, 0);

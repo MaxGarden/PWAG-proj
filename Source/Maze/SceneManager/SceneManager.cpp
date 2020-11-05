@@ -26,6 +26,11 @@ void SceneManager::DrawScene()
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+    if(IsAnyCollectible())
+        m_camera->SetColorMultiplier(glm::vec3{1.0f, 1.0f, 1.0f});
+    else
+        m_camera->SetColorMultiplier(glm::vec3{1.0f, 2.0f, 1.0f});
+    
     for(const auto& object : m_objects)
         object->Draw();
 }
@@ -59,6 +64,17 @@ void SceneManager::VisitObjects(const std::function<bool(const Object&)>& visito
         if(!visitor(*object))
             break;
     }
+}
+
+bool SceneManager::IsAnyCollectible() const noexcept
+{
+    for(const auto& object : m_objects)
+    {
+        if(object->GetFlags() & Object::Collectable)
+            return true;
+    }
+    
+    return false;
 }
 
 Shader* SceneManager::EnsureShader(const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName) const noexcept
@@ -97,8 +113,8 @@ void SceneManager::AddFloor()
        1, 2, 3
     };
 
-    const auto shader = EnsureShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag.fs");
-    auto floor = std::make_unique<Object>("Data/Textures/grass.jpg", *shader, floorVertices, floorIndices, 6);
+    const auto shader = EnsureShader("Source/Maze/Shaders/vert.vs", "Source/Maze/Shaders/frag_blend.fs");
+    auto floor = std::make_unique<Object>("Data/Textures/grass.jpg", *shader, floorVertices, floorIndices, 6, "Data/Textures/ground.jpg");
     auto material = floor->GetMaterial();
     
     material.diffuse = glm::vec3{0.8f, 0.8f, 0.8f};

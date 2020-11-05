@@ -27,6 +27,7 @@ public:
     void SetColor(const glm::vec3& color) const noexcept;
     void SetModelMatrix(const glm::mat4& modelMatrix) const noexcept;
     void SetMaterial(const Material& material) const noexcept;
+    void SetSecondTexture(unsigned int id) const noexcept;
     
     void Use() const;
     void Update() const;
@@ -40,6 +41,7 @@ private:
     void SetMat4(const char* name, const glm::mat4& value) const noexcept;
     void SetVec3(const char* name, const glm::vec3& value) const noexcept;
     void SetFloat(const char* name, float value) const noexcept;
+    void SetInteger(const char* name, int value) const noexcept;
     
 private:
     const Camera& m_camera;

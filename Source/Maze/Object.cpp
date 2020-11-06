@@ -1,5 +1,6 @@
 #include "Object.h"
 #include "ResourcesManager.h"
+#include <algorithm>
 
 static const auto componentsCount = 8;
 
